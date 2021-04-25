@@ -5,6 +5,8 @@
   , "console"
   , "effect"
   , "foreign-generic"
+  , "halogen"
+  , "halogen-css"
   , "maybe"
   , "newtype"
   , "prelude"
@@ -12,5 +14,5 @@
   , "psci-support"
   ]
 , packages = ./packages.dhall
-, sources = [ "src/**/*.purs", "test/**/*.purs" ]
+, sources = [ "src/**/*.purs", "test/**/*.purs", "app/**/*.purs" ]
 }
