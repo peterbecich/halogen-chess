@@ -1,5 +1,5 @@
 # adapted from https://github.com/purescript-contrib/purescript-argonaut-generic/blob/d211820cfec5c7cf2caa20dc6dc293671949b55c/.github/workflows/ci.yml
-name: Purescript example
+name: Purescript
 
 on:
   push:
@@ -11,18 +11,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-    defaults:
-      run:
-        working-directory: ./example
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Set up a PureScript toolchain
         uses: purescript-contrib/setup-purescript@main
-        with: # https://github.com/purescript-contrib/setup-purescript#specify-versions
-          purescript: "0.14.1"
 
       - name: Cache PureScript dependencies
         uses: actions/cache@v2
@@ -38,8 +33,8 @@ jobs:
       - name: Build source
         run: spago build --no-install
 
-      - name: Bundle app
-        run: spago bundle-app --to static/index.js
+      # - name: Bundle app
+      #   run: spago bundle-app --to static/index.js
 
       - name: Run tests
         run: spago test --no-install
