@@ -1,0 +1,45 @@
+cabal-version:      2.4
+name:               halogen-chess
+version:            0.1.0.0
+
+synopsis: Chess game in Purescript Halogen
+
+author:             Peter Becich
+maintainer:         peterbecich@gmail.com
+license:            BSD-3-Clause
+license-file:       LICENSE
+extra-source-files: CHANGELOG.md
+
+library
+    exposed-modules:  MyLib
+                    , Types.Bridge
+
+    build-depends:    base ^>=4.14.1.0
+                    , chessIO
+                    , purescript-bridge
+                    , servant >=0.18.0
+                    , servant-server >=0.18.0
+                    , wai-extra
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+executable halogen-chess
+    main-is:          Main.hs
+
+    build-depends:    base ^>=4.14.1.0
+                    , halogen-chess
+
+    hs-source-dirs:   app
+    default-language: Haskell2010
+
+executable generate-purescript
+    main-is:          GeneratePurescript.hs
+
+    build-depends:    base ^>=4.14.1.0
+                    , halogen-chess
+                    , purescript-bridge
+                    , text
+                    , lens
+
+    hs-source-dirs:   app
+    default-language: Haskell2010
