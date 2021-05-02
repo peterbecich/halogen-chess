@@ -26,7 +26,7 @@ import           Data.Text.Encoding (encodeUtf8)
 
 import Game.Chess.Orphans
 
-import Game.Chess (Color (..), PieceType (..), Sq (..))
+import Game.Chess (Color (..), PieceType (..), Sq (..), toRF)
 import Game.Chess.Board (Board, allPieces)
 
 instance Accept HTML where
@@ -37,6 +37,7 @@ instance Accept HTML where
 
 type ChessServer
   = "board" :> (Get '[JSON] Board)
+  :<|> "rf" :> ReqBody '[JSON] Sq :> Get '[JSON] (Int, Int)
   :<|> Raw
 
 instance MimeRender HTML RawHtml where
@@ -47,6 +48,7 @@ newtype RawHtml = RawHtml { unRaw :: BSL.ByteString }
 
 chessServer :: Server ChessServer
 chessServer = return allPieces
+  :<|> return . toRF
   :<|> serveDirectoryWebApp "static"
 
 type RootServer = Get '[HTML] RawHtml

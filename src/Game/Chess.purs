@@ -2,6 +2,7 @@ module Game.Chess where
 
 import Prelude
 
+import Data.Tuple (Tuple(Tuple))
 import Data.Lens (view)
 import Data.Maybe (Maybe(..), maybe)
 import Halogen as H
@@ -26,6 +27,7 @@ import Halogen.HTML.CSS as CSS
 import CSS.Display as CSS.Display
 import Halogen.HTML (ClassName(..))
 import Halogen.HTML.Properties as HP
+
 
 data Action
   = CheckButtonState
@@ -67,7 +69,7 @@ render state = HH.fromPlainHTML $ flip HH.div h $ s
     b :: Array Sq
     b = view _Board state.board
     h :: Array HH.PlainHTML
-    h = map (square Black) b
+    h = map (square Black (Tuple 1 2)) b
 
     g = pure $ CSS.style do
       -- grid properties not supported
