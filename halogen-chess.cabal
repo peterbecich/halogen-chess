@@ -13,13 +13,22 @@ extra-source-files: CHANGELOG.md
 library
     exposed-modules:  MyLib
                     , Types.Bridge
+                    , Game.Chess.Orphans
+                    , Game.Chess.Board
 
     build-depends:    base ^>=4.14.1.0
+                    , aeson
+                    , bytestring
                     , chessIO
+                    , utf8-string
+                    , lens
+                    , text
                     , purescript-bridge
+                    , http-media
                     , servant >=0.18.0
                     , servant-server >=0.18.0
                     , wai-extra
+                    , warp
     hs-source-dirs:   src
     default-language: Haskell2010
 

@@ -16,8 +16,9 @@ import Language.PureScript.Bridge.PSTypes ()
 
 import Game.Chess (Color (..), PieceType (..), Sq (..))
 
+import Game.Chess.Board (Board)
+
 deriving instance Generic Color
-deriving instance Generic Sq
 deriving instance Generic PieceType
 
 myBridge :: BridgePart
@@ -28,4 +29,5 @@ myTypes =
   [ mkSumType (Proxy :: Proxy Color)
   , mkSumType (Proxy :: Proxy Sq)
   , mkSumType (Proxy :: Proxy PieceType)
+  , mkSumType (Proxy :: Proxy Board)
   ]

@@ -1,5 +1,5 @@
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.14.1-20210419/packages.dhall sha256:d9a082ffb5c0fabf689574f0680e901ca6f924e01acdbece5eeedd951731375a
+      https://github.com/purescript/package-sets/releases/download/psc-0.14.1-20210427/packages.dhall sha256:edbb8f70232fb83895c7ce02f5d2b29f6ee1722f1a70fc58d3bc0ab0de18afe4
 
 let additions =
       { argonaut-aeson-generic =
@@ -31,13 +31,13 @@ let additions =
           , "transformers"
           ]
         , repo = "git://github.com/purescript-contrib/purescript-css.git"
-        , version = "5c1a44ee95c259352a2b4570b060de14130540bc"
+        , version = "9ece80aab68d7776a1baa9dfab00ac68c4b72afa"
         }
       , halogen-css =
         { dependencies = [ "css", "halogen" ]
         , repo =
             "git://github.com/purescript-halogen/purescript-halogen-css.git"
-        , version = "1600df2902eccc3e3c73559a3446c99469885af6"
+        , version = "dae531c089f13aff27b3f6a2185d01f100478590"
         }
       }
 

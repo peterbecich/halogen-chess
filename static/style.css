@@ -1,0 +1,24 @@
+body {
+    font-family: sans-serif;
+    max-width: 800px;
+    margin: auto;
+}
+
+.box {
+    border: 1px solid #ccc;
+    background: #eee;
+    margin: 20px 0;
+    padding: 20px;
+}
+
+.box h1 {
+    margin-top: 0;
+    font-size: 150%;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: 8fr;
+    grid-template-rows: 8fr;
+
+}
