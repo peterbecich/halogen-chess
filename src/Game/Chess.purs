@@ -5,7 +5,14 @@ import Prelude
 import Data.Tuple (Tuple(Tuple))
 import Data.Lens (view)
 import Data.Maybe (Maybe(..), maybe)
+import Data.Generic.Rep (class Generic, to)
+import Data.Show.Generic (class GenericShow, genericShow)
+import Data.Ord.Generic (class GenericOrd, genericCompare)
+import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
+import Data.Argonaut.Aeson.Options as Argonaut
 import Halogen as H
+import Data.Argonaut.Core (stringify)
+import Data.Argonaut.Encode.Class (class EncodeJson, encodeJson)
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Type.Proxy (Proxy(..))
@@ -22,16 +29,17 @@ import Game.Chess.Internal.Square (Sq)
 import Data.Argonaut.Core (Json)
 import Game.Chess.Board (Board(Board), _Board)
 import Game.Chess.Internal (Color(..))
-import Game.HTML.Square (square)
-import Halogen.HTML.CSS as CSS
+import Game.HTML.Square as Square
+import CSS as CSS
+import Halogen.HTML.CSS as HCSS
 import CSS.Display as CSS.Display
 import Halogen.HTML (ClassName(..))
 import Halogen.HTML.Properties as HP
 
-
 data Action
   = CheckButtonState
   | Initialize
+  | ReceiveSquare Square.Output
 
 type State =
   { toggleCount :: Int
@@ -39,7 +47,18 @@ type State =
   , board       :: Board
   }
 
-type ChildSlots = ( )
+data Sq' = Sq' Sq
+instance encodeJsonSq' :: EncodeJson Sq' where
+  encodeJson = genericEncodeAeson Argonaut.defaultOptions
+derive instance gensq :: Generic Sq' _
+instance showsq :: Show Sq' where
+  show x = stringify $ encodeJson x
+instance eqsq :: Eq Sq' where
+  eq x y = eq (show x) (show y)
+instance ordsq :: Ord Sq' where
+  compare x y = compare (show x) (show y)
+
+type ChildSlots = ( square :: Square.SquareSlot Sq' )
 
 _button :: Proxy "button"
 _button = Proxy
@@ -63,26 +82,31 @@ initialState _ =
   , board: Board mempty
   }
 
-render :: forall m. State -> H.ComponentHTML Action ChildSlots m
-render state = HH.fromPlainHTML $ flip HH.div h $ s
+render ::
+     forall m. MonadAff m
+  => State
+  -> H.ComponentHTML Action ChildSlots m
+render state = HH.div style h
   where
     b :: Array Sq
     b = view _Board state.board
-    h :: Array HH.PlainHTML
-    h = map (square Black (Tuple 1 2)) b
+    h :: Array (HH.ComponentHTML Action ChildSlots m)
+    h = flip map b $ \sq ->
+      HH.slot Square._square (Sq' sq) (Square.component sq) sq ReceiveSquare
 
-    g = pure $ CSS.style do
-      -- grid properties not supported
+    style = pure $ HCSS.style do
+      -- grid properties not supported; have to set manually
       -- https://github.com/purescript-contrib/purescript-css/issues/112
+      CSS.key (CSS.fromString "grid-template-columns") "50px 50px 50px 50px 50px 50px 50px 50px"
+      CSS.key (CSS.fromString "grid-template-rows") "50px 50px 50px 50px 50px 50px 50px 50px "
       CSS.Display.display CSS.Display.grid
-    -- https://github.com/JordanMartinez/learn-halogen/blob/v5.0.2/src/01-Static-HTML/06-Adding-CSS.purs
-    s = g <> [ HP.classes [ ClassName "board" ] ]
 
 handleAction ::
      forall o m. MonadAff m
   => Action
   -> H.HalogenM State Action ChildSlots o m Unit
 handleAction = case _ of
+  ReceiveSquare _ -> pure unit
   Initialize -> do
     logShow "Initialize"
     boardResponse :: Either Error (Response Json) <-

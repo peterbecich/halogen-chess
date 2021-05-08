@@ -18,6 +18,7 @@
   , "prelude"
   , "profunctor-lenses"
   , "psci-support"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs", "app/**/*.purs" ]

@@ -11,6 +11,10 @@ import Game.Chess (Color (..), PieceType (..), Sq (..))
 
 
 deriving instance Generic Sq
+deriving instance Generic Color
 
 deriving instance ToJSON Sq
 deriving instance FromJSON Sq
+
+deriving instance ToJSON Color
+deriving instance FromJSON Color
