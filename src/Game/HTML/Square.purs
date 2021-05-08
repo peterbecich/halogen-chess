@@ -2,7 +2,7 @@ module Game.HTML.Square where
 
 import Prelude
 
-import Game.Chess.Internal (Color(..))
+import Game.Chess.Internal (Color(..), PieceType(Pawn))
 import Game.Chess.Internal.Square (Sq)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Argonaut.Core (stringify)
@@ -25,7 +25,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
 import Effect.Aff.Class (class MonadAff, liftAff)
-import Game.Chess.Internal (Color(..))
+import Game.HTML.Piece as Piece
 
 data Action = Initialize
 
@@ -40,11 +40,18 @@ type State =
   { sq :: Sq
   , coordinates :: Tuple Int Int
   , color :: Color
+  , piece :: Maybe (Tuple PieceType Color)
   }
 
 initialState :: forall i. Sq -> i -> State
-initialState sq' _ = { sq: sq', coordinates: Tuple 1 2, color: White }
+initialState sq' _ =
+  { sq: sq'
+  , coordinates: Tuple 1 2
+  , color: White
+  , piece: Just (Tuple Pawn White)
+  }
 
+type ChildSlots :: forall k. Row k
 type ChildSlots = ()
 
 _square :: Proxy "square"
@@ -75,10 +82,11 @@ coordinatesToCSS (Tuple x y) =
 square ::
      forall m. State
   -> H.ComponentHTML Action ChildSlots m
-square { sq, coordinates, color } =
+square { sq, coordinates, color, piece } =
   HH.div
     (pure color' <> pure (HP.classes (coordinatesToCSS coordinates)))
-    [ HH.text (stringify (encodeJson sq)) ]
+    [ Piece.pieceHTML piece
+    ]
   where
   color' = CSS.style $ case color of
     Black ->

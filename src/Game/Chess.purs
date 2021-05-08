@@ -2,39 +2,32 @@ module Game.Chess where
 
 import Prelude
 
-import Data.Tuple (Tuple(Tuple))
 import Data.Lens (view)
-import Data.Maybe (Maybe(..), maybe)
-import Data.Generic.Rep (class Generic, to)
-import Data.Show.Generic (class GenericShow, genericShow)
-import Data.Ord.Generic (class GenericOrd, genericCompare)
+import Data.Maybe (Maybe(..))
+import Data.Generic.Rep (class Generic)
 import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
 import Data.Argonaut.Aeson.Options as Argonaut
 import Halogen as H
 import Data.Argonaut.Core (stringify)
 import Data.Argonaut.Encode.Class (class EncodeJson, encodeJson)
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
 import Type.Proxy (Proxy(..))
 import Effect.Class.Console (logShow)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Affjax (Error, Response, get)
 import Affjax.ResponseFormat (json)
-import Data.Either (Either(Left, Right))
-import Data.Traversable (for, for_)
+import Data.Either (Either(Left))
+import Data.Traversable (for_)
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
-import Data.Argonaut.Decode.Error (JsonDecodeError)
 import Game.Chess.Internal.Square (Sq)
 import Data.Argonaut.Core (Json)
 import Game.Chess.Board (Board(Board), _Board)
-import Game.Chess.Internal (Color(..))
 import Game.HTML.Square as Square
 import CSS as CSS
 import Halogen.HTML.CSS as HCSS
 import CSS.Display as CSS.Display
-import Halogen.HTML (ClassName(..))
-import Halogen.HTML.Properties as HP
+
 
 data Action
   = CheckButtonState
