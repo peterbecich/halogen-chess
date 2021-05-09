@@ -2,17 +2,18 @@ module Game.HTML.Square where
 
 import Prelude
 
-import Game.Chess.Internal (Color(..), PieceType(Pawn))
+import Game.Chess.Internal (Color(..), PieceType)
 import Game.Chess.Internal.Square (Sq)
-import Data.Maybe (Maybe(..), maybe)
-import Data.Argonaut.Core (stringify)
+import Data.Maybe (Maybe(..))
 import Data.Argonaut.Encode.Class (encodeJson)
+import Prim (Boolean, Int, Row, Type, Array)
 import Data.Tuple (Tuple(Tuple))
+import Effect.Console (log)
 import Data.Argonaut.Core (Json)
 import Affjax.RequestBody as RequestBody
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
-import Effect.Class.Console (logShow)
-import Data.Either (Either(Left, Right))
+
+import Data.Either (Either)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Data.Traversable (for, for_)
 import Halogen.HTML.CSS as CSS
@@ -20,14 +21,19 @@ import CSS.Color as CSS.Color
 import Affjax (Error, Response, post)
 import Affjax.ResponseFormat (json)
 import CSS.Background as Background
+import CSS.Border as CSS.Border
+import CSS.Size as CSS.Size
 import Halogen as H
 import Halogen.HTML.Properties as HP
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Type.Proxy (Proxy(..))
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Game.HTML.Piece as Piece
 
-data Action = Initialize
+data Action
+  = Initialize
+  | Click
 
 data Query :: forall k. k -> Type
 data Query a = Foo
@@ -41,6 +47,7 @@ type State =
   , coordinates :: Tuple Int Int
   , color :: Color
   , piece :: Maybe (Tuple Color PieceType)
+  , selected :: Boolean
   }
 
 initialState :: forall i. Sq -> i -> State
@@ -49,6 +56,7 @@ initialState sq' _ =
   , coordinates: Tuple 1 2
   , color: White
   , piece: Nothing
+  , selected: false
   }
 
 type ChildSlots :: forall k. Row k
@@ -82,17 +90,30 @@ coordinatesToCSS (Tuple x y) =
 square ::
      forall m. State
   -> H.ComponentHTML Action ChildSlots m
-square { sq, coordinates, color, piece } =
+square { sq, coordinates, color, piece, selected } =
   HH.div
-    (pure color' <> pure (HP.classes (coordinatesToCSS coordinates)))
+    [ border
+    , HP.classes (coordinatesToCSS coordinates)
+    , HE.onClick \_ -> Click
+    ]
     [ Piece.pieceHTML piece
     ]
   where
-  color' = CSS.style $ case color of
+  color' = case color of
     Black ->
       Background.backgroundColor $ CSS.Color.lighten 0.6 CSS.Color.black
     White ->
       Background.backgroundColor $ CSS.Color.white
+
+  border = case selected of
+    false -> CSS.style color'
+    true  -> do
+      CSS.style do
+        color'
+        CSS.Border.border
+          CSS.Border.dashed
+          (CSS.Size.px 3.0)
+          CSS.Color.blue
 
 handleAction ::
      forall o m. MonadAff m
@@ -100,6 +121,15 @@ handleAction ::
   -> Action
   -> H.HalogenM State Action ChildSlots o m Unit
 handleAction sq = case _ of
+  Click -> do
+    { piece } <- H.get
+    case piece of
+      Nothing -> pure unit
+      Just _  -> do
+        { selected } <- H.get
+        void $ H.modify _ { selected = not selected }
+        H.liftEffect $ log $ "click " <> show (not selected)
+        pure unit
   Initialize -> do
     coordinateResponse :: Either Error (Response Json) <-
       liftAff $ post json "/rf" (Just (RequestBody.json (encodeJson sq)))
@@ -121,5 +151,3 @@ handleAction sq = case _ of
       for (genericDecodeAeson defaultOptions res.body)
         $ \(tuple :: Tuple Color PieceType) -> do
           H.modify _ { piece = Just tuple }
-
-    pure unit
