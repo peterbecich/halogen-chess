@@ -40,7 +40,7 @@ type State =
   { sq :: Sq
   , coordinates :: Tuple Int Int
   , color :: Color
-  , piece :: Maybe (Tuple PieceType Color)
+  , piece :: Maybe (Tuple Color PieceType)
   }
 
 initialState :: forall i. Sq -> i -> State
@@ -48,7 +48,7 @@ initialState sq' _ =
   { sq: sq'
   , coordinates: Tuple 1 2
   , color: White
-  , piece: Just (Tuple Pawn White)
+  , piece: Nothing
   }
 
 type ChildSlots :: forall k. Row k
@@ -114,5 +114,12 @@ handleAction sq = case _ of
       for (genericDecodeAeson defaultOptions res.body)
         $ \(color' :: Color) -> do
           H.modify _ { color = color' }
+
+    startingPosition :: Either Error (Response Json) <-
+      liftAff $ post json "/pieceAtStartingPosition" (Just (RequestBody.json (encodeJson sq)))
+    for_ startingPosition $ \res -> do
+      for (genericDecodeAeson defaultOptions res.body)
+        $ \(tuple :: Tuple Color PieceType) -> do
+          H.modify _ { piece = Just tuple }
 
     pure unit

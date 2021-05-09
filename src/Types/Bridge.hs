@@ -18,8 +18,6 @@ import Game.Chess (Color (..), PieceType (..), Sq (..))
 
 import Game.Chess.Board (Board)
 
-deriving instance Generic PieceType
-
 myBridge :: BridgePart
 myBridge = defaultBridge
 

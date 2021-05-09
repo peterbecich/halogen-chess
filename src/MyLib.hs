@@ -26,7 +26,7 @@ import           Data.Text.Encoding (encodeUtf8)
 
 import Game.Chess.Orphans
 
-import Game.Chess (Color (..), PieceType (..), Sq (..), toRF, isLight)
+import Game.Chess (Color (..), PieceType (..), Sq (..), toRF, isLight, startpos, pieceAt)
 import Game.Chess.Board (Board, allPieces)
 
 instance Accept HTML where
@@ -39,6 +39,7 @@ type ChessServer
   = "board" :> (Get '[JSON] Board)
   :<|> "rf"    :> ReqBody '[JSON] Sq :> Post '[JSON] (Int, Int)
   :<|> "color" :> ReqBody '[JSON] Sq :> Post '[JSON] Color
+  :<|> "pieceAtStartingPosition" :> ReqBody '[JSON] Sq :> Post '[JSON] (Maybe (Color, PieceType))
   :<|> Raw
 
 instance MimeRender HTML RawHtml where
@@ -51,6 +52,7 @@ chessServer :: Server ChessServer
 chessServer = return allPieces
   :<|> return . toRF
   :<|> (\sq -> return (if isLight sq then White else Black))
+  :<|> (\sq -> return $ pieceAt startpos sq)
   :<|> serveDirectoryWebApp "static"
 
 type RootServer = Get '[HTML] RawHtml
