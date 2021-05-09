@@ -19,7 +19,7 @@ pieceHTML (Just (Tuple color piece)) = HH.fromPlainHTML
     root = "images/Chess_"
 
     p Pawn   = "p"
-    p Knight = "k"
+    p Knight = "n"
     p Bishop = "b"
     p Rook   = "r"
     p Queen  = "q"
