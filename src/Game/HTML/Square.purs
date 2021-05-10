@@ -36,9 +36,9 @@ data Action
   | Click
 
 data Query :: forall k. k -> Type
-data Query a = Foo
+data Query a = Unselect | Select
 
-data Output = Clicked
+data Output = Clicked Sq
 
 type SquareSlot = H.Slot Query Output
 
@@ -66,9 +66,9 @@ _square :: Proxy "square"
 _square = Proxy
 
 component ::
-     forall q i o m. MonadAff m
+     forall i m. MonadAff m
   => Sq
-  -> H.Component q i o m
+  -> H.Component Query i Output m
 component sq' =
   H.mkComponent
     { initialState: initialState sq'
@@ -76,6 +76,7 @@ component sq' =
     , eval: H.mkEval
       $ H.defaultEval
         { handleAction = handleAction sq'
+        , handleQuery  = handleQuery
         , initialize = Just Initialize
         }
     }
@@ -115,11 +116,22 @@ square { sq, coordinates, color, piece, selected } =
           (CSS.Size.px 3.0)
           CSS.Color.blue
 
+handleQuery ::
+     forall m a. Query a
+  -> H.HalogenM State Action () Output m (Maybe a)
+handleQuery = case _ of
+  Unselect -> do
+    void $ H.modify _ { selected = false }
+    pure Nothing
+  Select -> do
+    void $ H.modify _ { selected = true }
+    pure Nothing
+
 handleAction ::
-     forall o m. MonadAff m
+     forall m. MonadAff m
   => Sq
   -> Action
-  -> H.HalogenM State Action ChildSlots o m Unit
+  -> H.HalogenM State Action ChildSlots Output m Unit
 handleAction sq = case _ of
   Click -> do
     { piece } <- H.get
@@ -127,9 +139,8 @@ handleAction sq = case _ of
       Nothing -> pure unit
       Just _  -> do
         { selected } <- H.get
-        void $ H.modify _ { selected = not selected }
         H.liftEffect $ log $ "click " <> show (not selected)
-        pure unit
+        H.raise $ Clicked sq
   Initialize -> do
     coordinateResponse :: Either Error (Response Json) <-
       liftAff $ post json "/rf" (Just (RequestBody.json (encodeJson sq)))

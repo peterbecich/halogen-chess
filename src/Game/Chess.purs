@@ -4,11 +4,12 @@ import Prelude
 
 import Data.Lens (view)
 import Data.Maybe (Maybe(..))
+import Data.Tuple (Tuple(..))
 import Data.Generic.Rep (class Generic)
 import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
 import Data.Argonaut.Aeson.Options as Argonaut
 import Halogen as H
-import Data.Argonaut.Core (stringify)
+import Data.Argonaut.Core (Json, stringify)
 import Data.Argonaut.Encode.Class (class EncodeJson, encodeJson)
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
@@ -21,7 +22,6 @@ import Data.Traversable (for_)
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Game.Chess.Internal.Square (Sq)
-import Data.Argonaut.Core (Json)
 import Game.Chess.Board (Board(Board), _Board)
 import Game.HTML.Square as Square
 import CSS as CSS
@@ -35,9 +35,11 @@ data Action
   | ReceiveSquare Square.Output
 
 type State =
-  { toggleCount :: Int
-  , buttonState :: Maybe Boolean
-  , board       :: Board
+  { toggleCount     :: Int
+  , buttonState     :: Maybe Boolean
+  , board           :: Board
+  , sourceSelection :: Maybe Sq
+  , destinationSelection :: Maybe Sq
   }
 
 data Sq' = Sq' Sq
@@ -73,6 +75,8 @@ initialState _ =
   { toggleCount: 0
   , buttonState: Nothing
   , board: Board mempty
+  , sourceSelection: Nothing
+  , destinationSelection: Nothing
   }
 
 render ::
@@ -99,7 +103,30 @@ handleAction ::
   => Action
   -> H.HalogenM State Action ChildSlots o m Unit
 handleAction = case _ of
-  ReceiveSquare _ -> pure unit
+  ReceiveSquare (Square.Clicked sq) -> do
+    {sourceSelection, destinationSelection} <- H.get
+    -- logShow
+    case Tuple sourceSelection destinationSelection of
+      Tuple (Just src) (Just dst) -> do
+        let
+          srcSlot = Sq' src
+          dstSlot = Sq' dst
+        H.tell Square._square srcSlot (pure Square.Unselect)
+        H.tell Square._square dstSlot (pure Square.Unselect)
+        void $ H.modify _ { sourceSelection = Nothing, destinationSelection = Nothing }
+        pure unit
+      Tuple (Just _) Nothing -> do
+        H.tell Square._square (Sq' sq) (pure Square.Select)
+        void $ H.modify _ { destinationSelection = Just sq }
+        pure unit
+      Tuple Nothing (Just _) -> do
+        void $ H.modify _ { sourceSelection = Nothing, destinationSelection = Nothing }
+        pure unit
+      Tuple Nothing Nothing -> do
+        H.tell Square._square (Sq' sq) (pure Square.Select)
+        void $ H.modify _ { sourceSelection = Just sq }
+        pure unit
+
   Initialize -> do
     logShow "Initialize"
     boardResponse :: Either Error (Response Json) <-
