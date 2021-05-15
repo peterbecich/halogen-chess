@@ -113,7 +113,8 @@ handleAction = case _ of
           dstSlot = Sq' dst
         H.tell Square._square srcSlot (pure Square.Unselect)
         H.tell Square._square dstSlot (pure Square.Unselect)
-        void $ H.modify _ { sourceSelection = Nothing, destinationSelection = Nothing }
+        void $ H.modify _ { sourceSelection = Just sq, destinationSelection = Nothing }
+        H.tell Square._square (Sq' sq) (pure Square.Select)
         pure unit
       Tuple (Just _) Nothing -> do
         H.tell Square._square (Sq' sq) (pure Square.Select)
