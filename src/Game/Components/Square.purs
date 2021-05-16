@@ -1,4 +1,4 @@
-module Game.HTML.Square where
+module Game.Components.Square where
 
 import Prelude
 
@@ -29,7 +29,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Type.Proxy (Proxy(..))
 import Effect.Aff.Class (class MonadAff, liftAff)
-import Game.HTML.Piece as Piece
+import Game.Components.HTML.Piece as Piece
 
 data Action
   = Initialize
@@ -91,7 +91,7 @@ coordinatesToCSS (Tuple x y) =
 square ::
      forall m. State
   -> H.ComponentHTML Action ChildSlots m
-square { sq, coordinates, color, piece, selected } =
+square { coordinates, color, piece, selected } =
   HH.div
     [ border
     , HP.classes (coordinatesToCSS coordinates)

@@ -1,4 +1,4 @@
-module Game.Chess where
+module Game.Components.Chessboard where
 
 import Prelude
 
@@ -23,7 +23,7 @@ import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Game.Chess.Internal.Square (Sq)
 import Game.Chess.Board (Board(Board), _Board)
-import Game.HTML.Square as Square
+import Game.Components.Square as Square
 import CSS as CSS
 import Halogen.HTML.CSS as HCSS
 import CSS.Display as CSS.Display

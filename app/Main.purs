@@ -7,7 +7,7 @@ import Effect.Console (log)
 import Halogen as H
 import Halogen.Aff as HA
 import Halogen.VDom.Driver (runUI)
-import Game.Chess (component)
+import Game.Components.Chessboard (component)
 
 main :: Effect Unit
 main = HA.runHalogenAff do

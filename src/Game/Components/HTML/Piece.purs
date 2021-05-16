@@ -1,4 +1,4 @@
-module Game.HTML.Piece where
+module Game.Components.HTML.Piece where
 
 import Prelude
 
