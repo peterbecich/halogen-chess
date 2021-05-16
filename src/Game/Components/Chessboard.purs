@@ -55,8 +55,8 @@ instance ordsq :: Ord Sq' where
 
 type ChildSlots = ( square :: Square.SquareSlot Sq' )
 
-_button :: Proxy "button"
-_button = Proxy
+_chessboard :: Proxy "chessboard"
+_chessboard = Proxy
 
 component :: forall q i o m. MonadAff m => H.Component q i o m
 component =

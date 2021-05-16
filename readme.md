@@ -12,3 +12,10 @@ This project demonstrates the [Purescript Bridge](https://github.com/eskimor/pur
 
 
 * `cabal run generate-purescript` to use Purescript Bridge
+
+TODO
+
+* Make routing work:
+  * [http://localhost:8080/#/chess](http://localhost:8080/#/chess)
+  * [http://localhost:8080/#/pageB](http://localhost:8080/#/pageB)
+  * [http://localhost:8080/#/pageC](http://localhost:8080/#/pageC)

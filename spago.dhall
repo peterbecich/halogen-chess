@@ -18,6 +18,8 @@
   , "prelude"
   , "profunctor-lenses"
   , "psci-support"
+  , "routing"
+  , "routing-duplex"
   , "tuples"
   ]
 , packages = ./packages.dhall
