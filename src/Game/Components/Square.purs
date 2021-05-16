@@ -15,7 +15,7 @@ import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 
 import Data.Either (Either)
 import Data.Argonaut.Aeson.Options (defaultOptions)
-import Data.Traversable (for, for_)
+import Data.Traversable (for_)
 import Halogen.HTML.CSS as CSS
 import CSS.Color as CSS.Color
 import Affjax (Error, Response, post)
@@ -121,10 +121,10 @@ handleQuery ::
   -> H.HalogenM State Action () Output m (Maybe a)
 handleQuery = case _ of
   Unselect -> do
-    void $ H.modify _ { selected = false }
+    H.modify_ _ { selected = false }
     pure Nothing
   Select -> do
-    void $ H.modify _ { selected = true }
+    H.modify_ _ { selected = true }
     pure Nothing
 
 handleAction ::
@@ -143,22 +143,22 @@ handleAction sq = case _ of
         H.raise $ Clicked sq
   Initialize -> do
     coordinateResponse :: Either Error (Response Json) <-
-      liftAff $ post json "/rf" (Just (RequestBody.json (encodeJson sq)))
+      liftAff $ post json "/rf" $ Just $ RequestBody.json $ encodeJson sq
     for_ coordinateResponse $ \res -> do
-      for (genericDecodeAeson defaultOptions res.body)
+      for_ (genericDecodeAeson defaultOptions res.body)
         $ \(coordinates' :: Tuple Int Int) -> do
-          H.modify _ { coordinates = coordinates' }
+          H.modify_ _ { coordinates = coordinates' }
 
     colorResponse :: Either Error (Response Json) <-
-      liftAff $ post json "/color" (Just (RequestBody.json (encodeJson sq)))
+      liftAff $ post json "/color" $ Just $ RequestBody.json $ encodeJson sq
     for_ colorResponse $ \res -> do
-      for (genericDecodeAeson defaultOptions res.body)
+      for_ (genericDecodeAeson defaultOptions res.body)
         $ \(color' :: Color) -> do
-          H.modify _ { color = color' }
+          H.modify_ _ { color = color' }
 
     startingPosition :: Either Error (Response Json) <-
-      liftAff $ post json "/pieceAtStartingPosition" (Just (RequestBody.json (encodeJson sq)))
+      liftAff $ post json "/pieceAtStartingPosition" $ Just $ RequestBody.json $ encodeJson sq
     for_ startingPosition $ \res -> do
-      for (genericDecodeAeson defaultOptions res.body)
+      for_ (genericDecodeAeson defaultOptions res.body)
         $ \(tuple :: Tuple Color PieceType) -> do
-          H.modify _ { piece = Just tuple }
+          H.modify_ _ { piece = Just tuple }

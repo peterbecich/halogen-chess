@@ -17,7 +17,7 @@ import Effect.Class.Console (logShow)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Affjax (Error, Response, get)
 import Affjax.ResponseFormat (json)
-import Data.Either (Either(Left))
+import Data.Either (Either(Left, Right))
 import Data.Traversable (for_)
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
@@ -105,7 +105,6 @@ handleAction ::
 handleAction = case _ of
   ReceiveSquare (Square.Clicked sq) -> do
     {sourceSelection, destinationSelection} <- H.get
-    -- logShow
     case Tuple sourceSelection destinationSelection of
       Tuple (Just src) (Just dst) -> do
         let
@@ -115,32 +114,25 @@ handleAction = case _ of
         H.tell Square._square dstSlot (pure Square.Unselect)
         void $ H.modify _ { sourceSelection = Just sq, destinationSelection = Nothing }
         H.tell Square._square (Sq' sq) (pure Square.Select)
-        pure unit
       Tuple (Just _) Nothing -> do
         H.tell Square._square (Sq' sq) (pure Square.Select)
-        void $ H.modify _ { destinationSelection = Just sq }
-        pure unit
+        H.modify_ _ { destinationSelection = Just sq }
       Tuple Nothing (Just _) -> do
-        void $ H.modify _ { sourceSelection = Nothing, destinationSelection = Nothing }
-        pure unit
+        H.modify_ _ { sourceSelection = Nothing, destinationSelection = Nothing }
       Tuple Nothing Nothing -> do
         H.tell Square._square (Sq' sq) (pure Square.Select)
-        void $ H.modify _ { sourceSelection = Just sq }
-        pure unit
+        H.modify_ _ { sourceSelection = Just sq }
 
   Initialize -> do
     logShow "Initialize"
-    boardResponse :: Either Error (Response Json) <-
+    eBoardResponse :: Either Error (Response Json) <-
       liftAff $ get json "/board"
-    case boardResponse of
-      Left _ -> logShow "no board response"
-      _ -> pure unit
-    for_ boardResponse $ \board' -> do
-      for_ (genericDecodeAeson defaultOptions board'.body)
-        $ \(b :: Board) -> do
-          logShow "got Board"
-          H.modify _ {board = b}
+    case eBoardResponse of
+      Left _              -> logShow "no board response"
+      Right boardResponse ->
+        for_ (genericDecodeAeson defaultOptions boardResponse.body)
+          $ \(board :: Board) -> do
+            logShow "got board"
+            H.modify _ {board = board}
 
   CheckButtonState -> pure unit
-    -- buttonState <- H.request _button unit Button.IsOn
-    -- H.modify_ (_ { buttonState = buttonState })
