@@ -9,3 +9,6 @@ This project demonstrates the [Purescript Bridge](https://github.com/eskimor/pur
 * `spago bundle-app --to static/index.js --watch`
 * `cabal run halogen-chess`
 * [http://localhost:8080](http://localhost:8080)
+
+
+* `cabal run generate-purescript` to use Purescript Bridge

@@ -1,6 +1,6 @@
+{-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE DataKinds     #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeOperators         #-}
 
 module MyLib (someFunc) where
 
@@ -11,22 +11,23 @@ import           Control.Lens (view)
 import           Control.Monad (forM, mapM)
 import           Control.Monad.IO.Class (liftIO)
 import           Data.Aeson
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BSL
+import qualified Data.ByteString.Lazy.UTF8 as UTF8
 import           Data.Data
+import qualified Data.Text as Text
+import           Data.Text.Encoding (encodeUtf8)
 import           Data.Typeable
+import           Network.HTTP.Media ((//), (/:))
 import           Network.Wai.Handler.Warp
 import qualified Network.Wai.Middleware.Gzip as Gzip
 import           Servant
-import qualified Data.ByteString.Lazy as BSL
-import qualified Data.ByteString.Lazy.UTF8 as UTF8
 import           Servant.API (Accept (..))
-import qualified Data.ByteString as BS
-import qualified Data.Text as Text
-import           Network.HTTP.Media ((//), (/:))
-import           Data.Text.Encoding (encodeUtf8)
 
 import Game.Chess.Orphans
 
-import Game.Chess (Color (..), PieceType (..), Sq (..), toRF, isLight, startpos, pieceAt)
+import Game.Chess
+    (Color (..), PieceType (..), Sq (..), isLight, pieceAt, startpos, toRF)
 import Game.Chess.Board (Board, allPieces)
 
 instance Accept HTML where

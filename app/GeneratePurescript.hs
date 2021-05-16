@@ -6,7 +6,7 @@ import Language.PureScript.Bridge (buildBridge, writePSTypesWith)
 import Language.PureScript.Bridge.CodeGenSwitches
     (ForeignOptions (ForeignOptions), genForeign, useGenRep)
 
-import Types.Bridge (myBridge, myTypes)
+import Bridge (myBridge, myTypes)
 
 frontEndRoot :: String
 frontEndRoot = "src"

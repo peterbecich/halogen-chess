@@ -6,7 +6,7 @@
 {-# LANGUAGE TemplateHaskell    #-}
 {-# LANGUAGE TypeOperators      #-}
 
-module Types.Bridge where
+module Bridge where
 
 import Data.Proxy (Proxy (..))
 import GHC.Generics (Generic)

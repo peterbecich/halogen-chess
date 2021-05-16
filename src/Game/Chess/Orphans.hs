@@ -1,11 +1,11 @@
+{-# LANGUAGE DeriveAnyClass     #-}
+{-# LANGUAGE DeriveGeneric      #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric         #-}
 
 module Game.Chess.Orphans where
 
-import           Data.Aeson
-import           GHC.Generics
+import Data.Aeson
+import GHC.Generics
 
 import Game.Chess (Color (..), PieceType (..), Sq (..))
 
