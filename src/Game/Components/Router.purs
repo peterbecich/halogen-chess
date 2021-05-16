@@ -7,6 +7,7 @@ import Halogen as H
 import Effect.Console (log)
 import Effect.Aff.Class (class MonadAff)
 import Halogen.HTML as HH
+import Type.Proxy (Proxy(..))
 
 import Game.Routes (Route(..))
 import Game.Components.Utils (OpaqueSlot)
@@ -17,13 +18,14 @@ import Game.Components.HTML.Footer as Footer
 
 type State = Maybe Route
 
+data Output = Foo
+
 data Query a
   = Navigate Route a
 
 data Action
   = Initialize
   | HandleNavOutput Navigation.Output
-
 
 type Slots =
   ( navigation :: Navigation.NavigationSlot Unit
@@ -32,10 +34,13 @@ type Slots =
   , pageC      :: OpaqueSlot Unit
   )
 
+_router :: Proxy "router"
+_router = Proxy
+
 component
-  :: forall query input output m
+  :: forall input output m
    . MonadAff m
-  => H.Component query input output m
+  => H.Component Query input output m
 component =
   H.mkComponent
     { initialState
@@ -43,6 +48,7 @@ component =
     , eval: H.mkEval
       $ H.defaultEval
       { handleAction = handleAction
+      , handleQuery  = handleQuery
       , initialize = Just Initialize
       }
     }
@@ -65,6 +71,15 @@ component =
         Just PlayChess -> HH.slot Chessboard._chessboard unit Chessboard.component {} absurd
         Just PageB     -> HH.div_ [ HH.text "Page B" ]
         Just PageC     -> HH.div_ [ HH.text "Page C" ]
+
+  handleQuery
+    :: forall output a. Query a
+    -> H.HalogenM State Action Slots output m (Maybe a)
+  handleQuery = case _ of
+    Navigate route _ -> do
+      -- H.liftEffect $ log $ "GoTo"
+      H.put $ Just route
+      pure Nothing
 
   handleAction
     :: Action
