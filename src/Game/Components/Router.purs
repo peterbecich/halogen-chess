@@ -73,7 +73,7 @@ component =
         Just PageC     -> HH.div_ [ HH.text "Page C" ]
 
   handleQuery
-    :: forall output a. Query a
+    :: forall a. Query a
     -> H.HalogenM State Action Slots output m (Maybe a)
   handleQuery = case _ of
     Navigate route _ -> do

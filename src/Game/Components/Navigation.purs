@@ -2,34 +2,14 @@ module Game.Components.Navigation where
 
 import Prelude
 
-import Game.Chess.Internal (Color(..), PieceType)
-import Game.Chess.Internal.Square (Sq)
 import Data.Maybe (Maybe(..))
-import Data.Argonaut.Encode.Class (encodeJson)
 import Prim (Boolean, Int, Row, Type, Array)
-import Data.Tuple (Tuple(Tuple))
-import Effect.Console (log)
-import Data.Argonaut.Core (Json)
-import Affjax.RequestBody as RequestBody
-import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 
-import Data.Either (Either)
-import Data.Argonaut.Aeson.Options (defaultOptions)
-import Data.Traversable (for_)
-import Halogen.HTML.CSS as CSS
-import CSS.Color as CSS.Color
-import Affjax (Error, Response, post)
-import Affjax.ResponseFormat (json)
-import CSS.Background as Background
-import CSS.Border as CSS.Border
-import CSS.Size as CSS.Size
 import Halogen as H
-import Halogen.HTML.Properties as HP
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Type.Proxy (Proxy(..))
-import Effect.Aff.Class (class MonadAff, liftAff)
-import Game.Components.HTML.Piece as Piece
+import Effect.Aff.Class (class MonadAff)
 import Game.Routes (Route(..))
 
 data Action
