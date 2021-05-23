@@ -135,26 +135,24 @@ handleAction ::
 handleAction sq = case _ of
   Click -> do
     { piece } <- H.get
-    case piece of
-      Nothing -> pure unit
-      Just _  -> do
-        { selected } <- H.get
-        H.liftEffect $ log $ "click " <> show (not selected)
-        H.raise $ Clicked sq
+    for_ piece $ const do
+      { selected } <- H.get
+      H.liftEffect $ log $ "click " <> show (not selected)
+      H.raise $ Clicked sq
   Initialize -> do
     coordinateResponse :: Either Error (Response Json) <-
       liftAff $ post json "/rf" $ Just $ RequestBody.json $ encodeJson sq
     for_ coordinateResponse $ \res -> do
       for_ (genericDecodeAeson defaultOptions res.body)
-        $ \(coordinates' :: Tuple Int Int) -> do
-          H.modify_ _ { coordinates = coordinates' }
+        $ \(coordinates :: Tuple Int Int) -> do
+          H.modify_ _ { coordinates = coordinates }
 
     colorResponse :: Either Error (Response Json) <-
       liftAff $ post json "/color" $ Just $ RequestBody.json $ encodeJson sq
     for_ colorResponse $ \res -> do
       for_ (genericDecodeAeson defaultOptions res.body)
-        $ \(color' :: Color) -> do
-          H.modify_ _ { color = color' }
+        $ \(color :: Color) -> do
+          H.modify_ _ { color = color }
 
     startingPosition :: Either Error (Response Json) <-
       liftAff $ post json "/pieceAtStartingPosition" $ Just $ RequestBody.json $ encodeJson sq

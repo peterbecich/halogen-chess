@@ -27,7 +27,7 @@ import Game.Chess.Board (Board(Board), _Board)
 import Halogen.Store.Monad as Store
 import Game.Store as GS
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore, updateStore)
+import Halogen.Store.Monad (class MonadStore)
 import Halogen.Store.Select (selectAll)
 import Game.Components.Square as Square
 import CSS as CSS
@@ -80,7 +80,7 @@ component = connect selectAll $ H.mkComponent
   }
 
 deriveState :: forall i. Connected GS.Store i -> State
-deriveState { context, input } =
+deriveState { context } =
   { toggleCount: 0
   , buttonState: Nothing
   , board: context.board

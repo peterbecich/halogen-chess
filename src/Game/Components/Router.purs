@@ -9,9 +9,8 @@ import Effect.Aff.Class (class MonadAff)
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
 
-import Game.Chess.Board (Board(Board), _Board)
 import Game.Store as GS
-import Halogen.Store.Monad (class MonadStore, updateStore)
+import Halogen.Store.Monad (class MonadStore)
 
 import Game.Routes (Route(..))
 import Game.Components.Utils (OpaqueSlot)
