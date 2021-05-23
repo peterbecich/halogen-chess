@@ -5,6 +5,7 @@
   , "argonaut-aeson-generic"
   , "argonaut-codecs"
   , "argonaut-core"
+  , "arrays"
   , "console"
   , "css"
   , "effect"
