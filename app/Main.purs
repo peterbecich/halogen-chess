@@ -20,16 +20,17 @@ import Routing.Duplex (parse, print)
 main :: Effect Unit
 main = HA.runHalogenAff $ do
   body <- HA.awaitBody
-  root <- runStoreT GS.initialStore GS.reduce component
+  nav <- H.liftEffect makeInterface
+
+  root <- runStoreT GS.initialStore GS.reduce (component nav)
+
   halogenIO <- runUI root unit body
   void $ H.liftEffect $ do
-    H.liftEffect do
-      log "waiting to match on one of these:"
-      log $ print routeCodec PlayChess
-      log $ print routeCodec PageB
-      log $ print routeCodec PageC
+    log "waiting to match on one of these:"
+    log $ print routeCodec PlayChess
+    log $ print routeCodec PageB
+    log $ print routeCodec PageC
 
-    nav <- makeInterface
     -- nav.pushState (unsafeToForeign {}) "/chess"
     nav # matchesWith (parse routeCodec) \_ new -> do
       case new of

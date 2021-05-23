@@ -9,6 +9,10 @@ import Effect.Aff.Class (class MonadAff)
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
 
+import Foreign (unsafeToForeign)
+
+import Routing.PushState (PushStateInterface)
+
 import Game.Store as GS
 import Halogen.Store.Monad (class MonadStore)
 
@@ -44,14 +48,15 @@ component
   :: forall input output m
    . MonadAff m
   => MonadStore GS.Action GS.Store m
-  => H.Component Query input output m
-component =
+  => PushStateInterface
+  -> H.Component Query input output m
+component nav =
   H.mkComponent
     { initialState
     , render
     , eval: H.mkEval
       $ H.defaultEval
-      { handleAction = handleAction
+      { handleAction = handleAction nav
       , handleQuery  = handleQuery
       , initialize = Just Initialize
       }
@@ -86,10 +91,18 @@ component =
       pure Nothing
 
   handleAction
-    :: Action
+    :: PushStateInterface
+    -> Action
     -> H.HalogenM State Action Slots output m Unit
-  handleAction = case _ of
+  handleAction nav = case _ of
     HandleNavOutput (Navigation.GoTo route) -> do
-      H.liftEffect $ log $ "GoTo"
+      H.liftEffect do
+        log $ "GoTo"
+        -- nav.pushState (unsafeToForeign {}) "/chess"
+        case route of
+          PlayChess -> nav.pushState (unsafeToForeign {}) "/chess"
+          PageB     -> nav.pushState (unsafeToForeign {}) "/pageB"
+          PageC     -> nav.pushState (unsafeToForeign {}) "/pageC"
+
       H.put $ Just route
     _ -> pure unit
