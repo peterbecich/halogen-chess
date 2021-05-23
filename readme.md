@@ -7,6 +7,8 @@ This project uses:
 * [Purescript Bridge](https://github.com/eskimor/purescript-bridge)
 * [Purescript Halogen](https://github.com/purescript-halogen/purescript-halogen) 
 * [Purescript Halogen Store](https://github.com/thomashoneyman/purescript-halogen-store)
+* [Purescript Routing](https://github.com/purescript-contrib/purescript-routing)
+* [Purescript Routing Duplex](https://github.com/natefaubion/purescript-routing-duplex)
 
 ![Chess board](doc/chessboard.png)
 
@@ -17,9 +19,7 @@ This project uses:
 
 * `cabal run generate-purescript` to use Purescript Bridge
 
-TODO
-
-* Make routing work:
-  * [http://localhost:8080/#/chess](http://localhost:8080/#/chess)
-  * [http://localhost:8080/#/pageB](http://localhost:8080/#/pageB)
-  * [http://localhost:8080/#/pageC](http://localhost:8080/#/pageC)
+routes:
+  * [http://localhost:8080/chess](http://localhost:8080/chess)
+  * [http://localhost:8080/pageB](http://localhost:8080/pageB)
+  * [http://localhost:8080/pageC](http://localhost:8080/pageC)

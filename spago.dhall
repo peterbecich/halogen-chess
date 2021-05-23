@@ -11,6 +11,7 @@
   , "effect"
   , "either"
   , "foldable-traversable"
+  , "foreign"
   , "foreign-generic"
   , "halogen"
   , "halogen-css"

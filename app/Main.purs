@@ -9,8 +9,8 @@ import Halogen as H
 import Halogen.Aff as HA
 import Halogen.VDom.Driver (runUI)
 import Game.Components.Router (Query(Navigate), component)
-import Routing.Hash (matchesWith)
-
+import Routing.PushState (matchesWith, makeInterface)
+import Foreign (unsafeToForeign)
 import Game.Store as GS
 import Halogen.Store.Monad (runStoreT)
 
@@ -29,9 +29,11 @@ main = HA.runHalogenAff $ do
       log $ print routeCodec PageB
       log $ print routeCodec PageC
 
-    matchesWith (parse routeCodec) $ \_ new -> do
+    nav <- makeInterface
+    -- nav.pushState (unsafeToForeign {}) "/chess"
+    nav # matchesWith (parse routeCodec) \_ new -> do
       case new of
-        PlayChess -> H.liftEffect $ log "play chess"
-        PageB -> H.liftEffect $ log "page B"
-        PageC -> H.liftEffect $ log "page C"
+        PlayChess -> nav.pushState (unsafeToForeign {}) "/chess"
+        PageB     -> nav.pushState (unsafeToForeign {}) "/pageB"
+        PageC     -> nav.pushState (unsafeToForeign {}) "/pageC"
       launchAff_ $ halogenIO.query $ H.mkTell $ Navigate new

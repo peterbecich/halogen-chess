@@ -57,6 +57,15 @@ chessServer = return allPieces
   :<|> serveDirectoryWebApp "static"
 
 type RootServer = Get '[HTML] RawHtml
+  :<|> "chess" :> Get '[HTML] RawHtml
+  :<|> "pageB" :> Get '[HTML] RawHtml
+  :<|> "pageC" :> Get '[HTML] RawHtml
+
+rootServer :: BSL.ByteString -> Server RootServer
+rootServer root = return (RawHtml root)
+  :<|> return (RawHtml root)
+  :<|> return (RawHtml root)
+  :<|> return (RawHtml root)
 
 api :: Proxy (RootServer :<|> ChessServer)
 api = Proxy
@@ -66,4 +75,4 @@ someFunc = do
   root <- liftIO $ BSL.readFile "static/index.html"
   run 8080
     . Gzip.gzip Gzip.def
-    $ serve api (pure (RawHtml root) :<|> chessServer)
+    $ serve api (rootServer root :<|> chessServer)
