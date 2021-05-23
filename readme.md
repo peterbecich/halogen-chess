@@ -2,7 +2,11 @@
 
 [![Haskell](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml) [![Purescript](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml)
 
-This project demonstrates the [Purescript Bridge](https://github.com/eskimor/purescript-bridge) and [Purescript Halogen](https://github.com/purescript-halogen/purescript-halogen) libraries.
+This project uses:
+
+* [Purescript Bridge](https://github.com/eskimor/purescript-bridge)
+* [Purescript Halogen](https://github.com/purescript-halogen/purescript-halogen) 
+* [Purescript Halogen Store](https://github.com/thomashoneyman/purescript-halogen-store)
 
 ![Chess board](doc/chessboard.png)
 

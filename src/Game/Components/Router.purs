@@ -9,6 +9,10 @@ import Effect.Aff.Class (class MonadAff)
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
 
+import Game.Chess.Board (Board(Board), _Board)
+import Game.Store as GS
+import Halogen.Store.Monad (class MonadStore, updateStore)
+
 import Game.Routes (Route(..))
 import Game.Components.Utils (OpaqueSlot)
 import Game.Components.Chessboard as Chessboard
@@ -40,6 +44,7 @@ _router = Proxy
 component
   :: forall input output m
    . MonadAff m
+  => MonadStore GS.Action GS.Store m
   => H.Component Query input output m
 component =
   H.mkComponent

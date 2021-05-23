@@ -2,6 +2,7 @@ module Game.Components.Chessboard where
 
 import Prelude
 
+import Data.Array (length)
 import Data.Lens (view)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
@@ -23,6 +24,11 @@ import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Game.Chess.Internal.Square (Sq)
 import Game.Chess.Board (Board(Board), _Board)
+import Halogen.Store.Monad as Store
+import Game.Store as GS
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore, updateStore)
+import Halogen.Store.Select (selectAll)
 import Game.Components.Square as Square
 import CSS as CSS
 import Halogen.HTML.CSS as HCSS
@@ -58,17 +64,29 @@ type ChildSlots = ( square :: Square.SquareSlot Sq' )
 _chessboard :: Proxy "chessboard"
 _chessboard = Proxy
 
-component :: forall q i o m. MonadAff m => H.Component q i o m
-component =
-  H.mkComponent
-    { initialState
-    , render
-    , eval: H.mkEval
-      $ H.defaultEval
-        { handleAction = handleAction
-        , initialize = Just Initialize
-        }
-    }
+component ::
+     forall q i o m
+   . MonadAff m
+  => MonadStore GS.Action GS.Store m
+  => H.Component q i o m
+component = connect selectAll $ H.mkComponent
+  { initialState: deriveState
+  , render
+  , eval: H.mkEval
+    $ H.defaultEval
+      { handleAction = handleAction
+      , initialize = Just Initialize
+      }
+  }
+
+deriveState :: forall i. Connected GS.Store i -> State
+deriveState { context, input } =
+  { toggleCount: 0
+  , buttonState: Nothing
+  , board: context.board
+  , sourceSelection: Nothing
+  , destinationSelection: Nothing
+  }
 
 initialState :: forall i. i -> State
 initialState _ =
@@ -99,7 +117,9 @@ render state = HH.div style h
       CSS.Display.display CSS.Display.grid
 
 handleAction ::
-     forall o m. MonadAff m
+     forall o m
+   . MonadAff m
+  => MonadStore GS.Action GS.Store m
   => Action
   -> H.HalogenM State Action ChildSlots o m Unit
 handleAction = case _ of
@@ -125,14 +145,20 @@ handleAction = case _ of
 
   Initialize -> do
     logShow "Initialize"
-    eBoardResponse :: Either Error (Response Json) <-
-      liftAff $ get json "/board"
-    case eBoardResponse of
-      Left _              -> logShow "no board response"
-      Right boardResponse ->
-        for_ (genericDecodeAeson defaultOptions boardResponse.body)
-          $ \(board :: Board) -> do
-            logShow "got board"
-            H.modify _ {board = board}
+
+    s <- H.get
+    logShow $ "Board: " <> show (length (view _Board s.board))
+    when (length (view _Board s.board) == 0) do
+      logShow "Board has 0 items"
+      eBoardResponse :: Either Error (Response Json) <-
+        liftAff $ get json "/board"
+      case eBoardResponse of
+        Left _              -> logShow "no board response"
+        Right boardResponse ->
+          for_ (genericDecodeAeson defaultOptions boardResponse.body)
+            $ \(board :: Board) -> do
+              logShow "got board"
+              Store.updateStore $ GS.SetBoard board
+              H.modify _ {board = board}
 
   CheckButtonState -> pure unit

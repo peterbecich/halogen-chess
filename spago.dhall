@@ -13,6 +13,7 @@
   , "foreign-generic"
   , "halogen"
   , "halogen-css"
+  , "halogen-store"
   , "maybe"
   , "newtype"
   , "prelude"

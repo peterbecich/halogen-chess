@@ -11,13 +11,17 @@ import Halogen.VDom.Driver (runUI)
 import Game.Components.Router (Query(Navigate), component)
 import Routing.Hash (matchesWith)
 
+import Game.Store as GS
+import Halogen.Store.Monad (runStoreT)
+
 import Game.Routes (Route(..), routeCodec)
 import Routing.Duplex (parse, print)
 
 main :: Effect Unit
-main = HA.runHalogenAff do
+main = HA.runHalogenAff $ do
   body <- HA.awaitBody
-  halogenIO <- runUI component unit body
+  root <- runStoreT GS.initialStore GS.reduce component
+  halogenIO <- runUI root unit body
   void $ H.liftEffect $ do
     H.liftEffect do
       log "waiting to match on one of these:"
