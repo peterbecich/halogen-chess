@@ -6,6 +6,7 @@ import Data.Array (length)
 import Data.Lens (view)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
+import Data.Tuple.Nested (tuple3)
 import Data.Generic.Rep (class Generic)
 import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
 import Data.Argonaut.Aeson.Options as Argonaut
@@ -16,14 +17,16 @@ import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
 import Effect.Class.Console (logShow)
 import Effect.Aff.Class (class MonadAff, liftAff)
-import Affjax (Error, Response, get)
-import Affjax.ResponseFormat (json)
+import Affjax.RequestBody as RequestBody
+import Affjax (Error, Response, get, post)
+import Affjax.ResponseFormat (json, string)
 import Data.Either (Either(Left, Right))
 import Data.Traversable (for_)
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Game.Chess.Internal.Square (Sq)
 import Game.Chess.Board (Board(Board), _Board)
+import Game.Chess.Move (Move(Move))
 import Halogen.Store.Monad as Store
 import Game.Store as GS
 import Halogen.Store.Connect (Connected, connect)
@@ -46,6 +49,7 @@ type State =
   , board           :: Board
   , sourceSelection :: Maybe Sq
   , destinationSelection :: Maybe Sq
+  , fenPosition     :: String
   }
 
 data Sq' = Sq' Sq
@@ -86,6 +90,7 @@ deriveState { context } =
   , board: context.board
   , sourceSelection: Nothing
   , destinationSelection: Nothing
+  , fenPosition: mempty
   }
 
 initialState :: forall i. i -> State
@@ -95,13 +100,14 @@ initialState _ =
   , board: Board mempty
   , sourceSelection: Nothing
   , destinationSelection: Nothing
+  , fenPosition: mempty
   }
 
 render ::
      forall m. MonadAff m
   => State
   -> H.ComponentHTML Action ChildSlots m
-render state = HH.div style h
+render state = HH.div style (h <> [HH.text state.fenPosition])
   where
     b :: Array Sq
     b = view _Board state.board
@@ -124,8 +130,24 @@ handleAction ::
   -> H.HalogenM State Action ChildSlots o m Unit
 handleAction = case _ of
   ReceiveSquare (Square.Clicked sq) -> do
-    {sourceSelection, destinationSelection} <- H.get
+    {sourceSelection, destinationSelection, fenPosition} <- H.get
     case Tuple sourceSelection destinationSelection of
+      Tuple (Just from) Nothing -> do
+        H.tell Square._square (Sq' sq) (pure Square.Select)
+        H.modify_ _ { destinationSelection = Just sq }
+        -- make move
+
+        eMoveResponse :: Either Error (Response String) <-
+          liftAff
+            $ post string "/move"
+            $ Just $ RequestBody.json
+            $ encodeJson $ Move { fenPosition, from, to: sq }
+        case eMoveResponse of
+          Left _              -> logShow "no move response"
+          Right moveResponse -> do
+            void $ H.modify _ {fenPosition = moveResponse.body}
+            logShow $ "got move: " <> moveResponse.body
+
       Tuple (Just src) (Just dst) -> do
         let
           srcSlot = Sq' src
@@ -134,9 +156,7 @@ handleAction = case _ of
         H.tell Square._square dstSlot (pure Square.Unselect)
         void $ H.modify _ { sourceSelection = Just sq, destinationSelection = Nothing }
         H.tell Square._square (Sq' sq) (pure Square.Select)
-      Tuple (Just _) Nothing -> do
-        H.tell Square._square (Sq' sq) (pure Square.Select)
-        H.modify_ _ { destinationSelection = Just sq }
+
       Tuple Nothing (Just _) -> do
         H.modify_ _ { sourceSelection = Nothing, destinationSelection = Nothing }
       Tuple Nothing Nothing -> do
@@ -160,5 +180,12 @@ handleAction = case _ of
               logShow "got board"
               Store.updateStore $ GS.SetBoard board
               H.modify _ {board = board}
+      eStartPositionResponse :: Either Error (Response String) <-
+        liftAff $ get string "/start"
+      case eStartPositionResponse of
+        Left _              -> logShow "no start position response"
+        Right startResponse -> do
+          void $ H.modify _ {fenPosition = startResponse.body}
+          logShow $ "got start pos: " <> startResponse.body
 
   CheckButtonState -> pure unit

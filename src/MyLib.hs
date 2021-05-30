@@ -26,9 +26,21 @@ import           Servant.API (Accept (..))
 
 import Game.Chess.Orphans
 
+import Game.Chess.Move (Move)
+
 import Game.Chess
-    (Color (..), PieceType (..), Sq (..), isLight, pieceAt, startpos, toRF)
-import Game.Chess.Board (Board, allPieces)
+    ( Color (..)
+    , PieceType (..)
+    , Position
+    , Sq (..)
+    , fromFEN
+    , isLight
+    , pieceAt
+    , startpos
+    , toFEN
+    , toRF
+    )
+import Game.Chess.Board (Board, allPieces, checkMove')
 
 instance Accept HTML where
   contentType _ = let
@@ -41,6 +53,8 @@ type ChessServer
   :<|> "rf"    :> ReqBody '[JSON] Sq :> Post '[JSON] (Int, Int)
   :<|> "color" :> ReqBody '[JSON] Sq :> Post '[JSON] Color
   :<|> "pieceAtStartingPosition" :> ReqBody '[JSON] Sq :> Post '[JSON] (Maybe (Color, PieceType))
+  :<|> "start" :> Get '[PlainText] String
+  :<|> "move"  :> ReqBody '[JSON] Move :> Post '[PlainText] String
   :<|> Raw
 
 instance MimeRender HTML RawHtml where
@@ -54,6 +68,8 @@ chessServer = return allPieces
   :<|> return . toRF
   :<|> (\sq -> return (if isLight sq then White else Black))
   :<|> (\sq -> return $ pieceAt startpos sq)
+  :<|> return (toFEN startpos)
+  :<|> (\move -> return $ checkMove' move)
   :<|> serveDirectoryWebApp "static"
 
 type RootServer = Get '[HTML] RawHtml
@@ -73,6 +89,7 @@ api = Proxy
 someFunc :: IO ()
 someFunc = do
   root <- liftIO $ BSL.readFile "static/index.html"
+  putStrLn $ "Start pos: " <> toFEN startpos
   run 8080
     . Gzip.gzip Gzip.def
     $ serve api (rootServer root :<|> chessServer)

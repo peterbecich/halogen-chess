@@ -14,9 +14,10 @@ import Language.PureScript.Bridge
     (BridgePart, Language (Haskell), SumType, defaultBridge, mkSumType)
 import Language.PureScript.Bridge.PSTypes ()
 
-import Game.Chess (Color (..), PieceType (..), Sq (..))
+import Game.Chess (Color (..), PieceType (..), Sq (..), Ply (..), Position (..))
 
 import Game.Chess.Board (Board)
+import Game.Chess.Move (Move)
 
 myBridge :: BridgePart
 myBridge = defaultBridge
@@ -27,4 +28,7 @@ myTypes =
   , mkSumType (Proxy :: Proxy Sq)
   , mkSumType (Proxy :: Proxy PieceType)
   , mkSumType (Proxy :: Proxy Board)
+  , mkSumType (Proxy :: Proxy Move)
+  -- , mkSumType (Proxy :: Proxy Ply)
+  -- , mkSumType (Proxy :: Proxy Position)
   ]

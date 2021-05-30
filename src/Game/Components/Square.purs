@@ -134,11 +134,11 @@ handleAction ::
   -> H.HalogenM State Action ChildSlots Output m Unit
 handleAction sq = case _ of
   Click -> do
-    { piece } <- H.get
-    for_ piece $ const do
-      { selected } <- H.get
-      H.liftEffect $ log $ "click " <> show (not selected)
-      H.raise $ Clicked sq
+    -- { piece } <- H.get
+    -- for_ piece $ const do
+    { selected } <- H.get
+    H.liftEffect $ log $ "click " <> show (not selected)
+    H.raise $ Clicked sq
   Initialize -> do
     coordinateResponse :: Either Error (Response Json) <-
       liftAff $ post json "/rf" $ Just $ RequestBody.json $ encodeJson sq

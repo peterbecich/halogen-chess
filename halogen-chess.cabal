@@ -15,6 +15,7 @@ library
                     , Bridge
                     , Game.Chess.Orphans
                     , Game.Chess.Board
+                    , Game.Chess.Move
 
     build-depends:    base ^>=4.14.1.0
                     , aeson
