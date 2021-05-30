@@ -56,7 +56,7 @@ component nav =
     , render
     , eval: H.mkEval
       $ H.defaultEval
-      { handleAction = handleAction nav
+      { handleAction = handleAction
       , handleQuery  = handleQuery
       , initialize = Just Initialize
       }
@@ -86,19 +86,17 @@ component nav =
     -> H.HalogenM State Action Slots output m (Maybe a)
   handleQuery = case _ of
     Navigate route _ -> do
-      -- H.liftEffect $ log $ "GoTo"
+      H.liftEffect $ log $ "Received query: GoTo " <> show route
       H.put $ Just route
       pure Nothing
 
   handleAction
-    :: PushStateInterface
-    -> Action
+    :: Action
     -> H.HalogenM State Action Slots output m Unit
-  handleAction nav = case _ of
+  handleAction = case _ of
     HandleNavOutput (Navigation.GoTo route) -> do
       H.liftEffect do
-        log $ "GoTo"
-        -- nav.pushState (unsafeToForeign {}) "/chess"
+        log $ "GoTo " <> show route
         case route of
           PlayChess -> nav.pushState (unsafeToForeign {}) "/chess"
           PageB     -> nav.pushState (unsafeToForeign {}) "/pageB"
