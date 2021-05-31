@@ -6,7 +6,6 @@ import Data.Array (length)
 import Data.Lens (view)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-import Data.Tuple.Nested (tuple3)
 import Data.Generic.Rep (class Generic)
 import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
 import Data.Argonaut.Aeson.Options as Argonaut
@@ -19,6 +18,7 @@ import Effect.Class.Console (logShow)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Affjax.RequestBody as RequestBody
 import Affjax (Error, Response, get, post)
+import Affjax.StatusCode (StatusCode(StatusCode))
 import Affjax.ResponseFormat (json, string)
 import Data.Either (Either(Left, Right))
 import Data.Traversable (for_)
@@ -144,9 +144,16 @@ handleAction = case _ of
             $ encodeJson $ Move { fenPosition, from, to: sq }
         case eMoveResponse of
           Left _              -> logShow "no move response"
-          Right moveResponse -> do
-            void $ H.modify _ {fenPosition = moveResponse.body}
-            logShow $ "got move: " <> moveResponse.body
+          Right (moveResponse :: Response String) ->
+            if (moveResponse.status == StatusCode 200)
+            then do
+              void $ H.modify _ {fenPosition = moveResponse.body}
+              mPiece <- H.request Square._square (Sq' from) Square.GivePiece
+              case mPiece of
+                Nothing -> pure unit
+                Just piece -> do
+                  H.tell Square._square (Sq' sq) (pure $ Square.ReceivePiece piece)
+            else logShow $ "illegal move"
 
       Tuple (Just src) (Just dst) -> do
         let

@@ -35,8 +35,12 @@ data Action
   = Initialize
   | Click
 
-data Query :: forall k. k -> Type
-data Query a = Unselect | Select
+data Query :: Type -> Type
+data Query a
+  = Unselect
+  | Select
+  | ReceivePiece (Tuple Color PieceType)
+  | GivePiece (Tuple Color PieceType -> a)
 
 data Output = Clicked Sq
 
@@ -120,6 +124,15 @@ handleQuery ::
      forall m a. Query a
   -> H.HalogenM State Action () Output m (Maybe a)
 handleQuery = case _ of
+  ReceivePiece tuple -> do
+    H.modify_ _ { piece = Just tuple }
+    pure Nothing
+  GivePiece reply -> do
+    { piece } <- H.get
+    H.modify_ _ { piece = Nothing }
+    case piece of
+      Nothing -> pure Nothing
+      Just p  -> pure $ Just (reply p)
   Unselect -> do
     H.modify_ _ { selected = false }
     pure Nothing
