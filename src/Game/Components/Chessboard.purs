@@ -148,6 +148,7 @@ handleAction = case _ of
             if (moveResponse.status == StatusCode 200)
             then do
               void $ H.modify _ {fenPosition = moveResponse.body}
+              Store.updateStore $ GS.SetFenPosition moveResponse.body
               mPiece <- H.request Square._square (Sq' from) Square.GivePiece
               case mPiece of
                 Nothing -> pure unit
