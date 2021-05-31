@@ -9,7 +9,7 @@ import Prelude
 
 import           Control.Lens (view)
 import           Control.Monad (forM, mapM)
-import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad.IO.Class (MonadIO, liftIO)
 import           Data.Aeson
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
@@ -48,13 +48,18 @@ instance Accept HTML where
     p = encodeUtf8 . Text.pack
     in p "text" // p "html" /: (p "charset", p "utf-8")
 
+type MoveServer
+  = "move"  :> ReqBody '[JSON] Move :> Post '[PlainText] String
+
 type ChessServer
   = "board" :> (Get '[JSON] Board)
   :<|> "rf"    :> ReqBody '[JSON] Sq :> Post '[JSON] (Int, Int)
   :<|> "color" :> ReqBody '[JSON] Sq :> Post '[JSON] Color
-  :<|> "pieceAtStartingPosition" :> ReqBody '[JSON] Sq :> Post '[JSON] (Maybe (Color, PieceType))
+  :<|> "pieceAtStartingPosition"
+       :> ReqBody '[JSON] Sq
+       :> Post '[JSON] (Maybe (Color, PieceType))
   :<|> "start" :> Get '[PlainText] String
-  :<|> "move"  :> ReqBody '[JSON] Move :> Post '[PlainText] String
+  :<|> MoveServer
   :<|> Raw
 
 instance MimeRender HTML RawHtml where
@@ -63,13 +68,24 @@ instance MimeRender HTML RawHtml where
 data HTML = HTML
 newtype RawHtml = RawHtml { unRaw :: BSL.ByteString }
 
+moveServer :: Move -> Handler String
+moveServer move = do
+  liftIO $ putStrLn "Move"
+  let mv = checkMove' move
+  case mv of
+    Nothing -> do
+      liftIO $ putStrLn "Illegal chess move"
+      throwError
+        $ err403 { errBody = UTF8.fromString "illegal chess move" }
+    Just position -> return position
+
 chessServer :: Server ChessServer
 chessServer = return allPieces
   :<|> return . toRF
   :<|> (\sq -> return (if isLight sq then White else Black))
   :<|> (\sq -> return $ pieceAt startpos sq)
   :<|> return (toFEN startpos)
-  :<|> (\move -> return $ checkMove' move)
+  :<|> moveServer
   :<|> serveDirectoryWebApp "static"
 
 type RootServer = Get '[HTML] RawHtml
