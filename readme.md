@@ -9,6 +9,9 @@ This project uses:
 * [Purescript Halogen Store](https://github.com/thomashoneyman/purescript-halogen-store)
 * [Purescript Routing](https://github.com/purescript-contrib/purescript-routing)
 * [Purescript Routing Duplex](https://github.com/natefaubion/purescript-routing-duplex)
+* [Haskell library chessIO](https://github.com/mlang/chessIO)
+
+Lots of inefficiencies in this single-page app; will be fixed later!
 
 ![Chess board](doc/chessboard.png)
 
