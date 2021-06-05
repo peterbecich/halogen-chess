@@ -1,0 +1,14 @@
+FROM haskell:8.10
+
+COPY . /app
+
+EXPOSE 8080
+
+RUN apt update \
+        && apt upgrade -y\
+        && apt install libpq-dev -y
+
+RUN cabal update
+
+RUN cd app \
+        && cabal build all --only-dependencies
