@@ -2,6 +2,8 @@ module Game.Components.Square where
 
 import Prelude
 
+import Halogen.Store.Connect (Connected, connect)
+import Game.Sq (Sq'(Sq'), State)
 import Game.Chess.Internal (Color(..), PieceType)
 import Game.Chess.Internal.Square (Sq)
 import Data.Maybe (Maybe(..))
@@ -12,8 +14,9 @@ import Effect.Console (log)
 import Data.Argonaut.Core (Json)
 import Affjax.RequestBody as RequestBody
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
-
+import Halogen.Store.Select (selectAll)
 import Data.Either (Either)
+import Data.HashMap (lookup)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Data.Traversable (for_)
 import Halogen.HTML.CSS as CSS
@@ -22,6 +25,9 @@ import Affjax (Error, Response, post)
 import Affjax.ResponseFormat (json)
 import CSS.Background as Background
 import CSS.Border as CSS.Border
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Monad as Store
+import Game.Store as GS
 import CSS.Size as CSS.Size
 import Halogen as H
 import Halogen.HTML.Properties as HP
@@ -46,13 +52,6 @@ data Output = Clicked Sq
 
 type SquareSlot = H.Slot Query Output
 
-type State =
-  { sq :: Sq
-  , coordinates :: Tuple Int Int
-  , color :: Color
-  , piece :: Maybe (Tuple Color PieceType)
-  , selected :: Boolean
-  }
 
 initialState :: forall i. Sq -> i -> State
 initialState sq' _ =
@@ -69,21 +68,27 @@ type ChildSlots = ()
 _square :: Proxy "square"
 _square = Proxy
 
-component ::
-     forall i m. MonadAff m
+deriveState :: forall i. Sq -> Connected GS.Store i -> State
+deriveState sq { context } = case lookup (Sq' sq) context.squares of
+  Nothing -> initialState sq 1.0
+  Just s ->  s
+
+component
+  :: forall i m
+   . MonadAff m
+  => MonadStore GS.Action GS.Store m
   => Sq
   -> H.Component Query i Output m
-component sq' =
-  H.mkComponent
-    { initialState: initialState sq'
-    , render: square
-    , eval: H.mkEval
-      $ H.defaultEval
-        { handleAction = handleAction sq'
-        , handleQuery  = handleQuery
-        , initialize = Just Initialize
-        }
-    }
+component sq' = connect selectAll $ H.mkComponent
+  { initialState: deriveState sq'
+  , render: square
+  , eval: H.mkEval
+    $ H.defaultEval
+      { handleAction = handleAction sq'
+      , handleQuery  = handleQuery sq'
+      , initialize = Just Initialize
+      }
+  }
 
 coordinatesToCSS :: Tuple Int Int -> Array HH.ClassName
 coordinatesToCSS (Tuple x y) =
@@ -92,8 +97,10 @@ coordinatesToCSS (Tuple x y) =
   , HH.ClassName ("column-" <> show (y + 1))
   ]
 
-square ::
-     forall m. State
+square
+  :: forall m
+   . MonadStore GS.Action GS.Store m
+  => State
   -> H.ComponentHTML Action ChildSlots m
 square { coordinates, color, piece, selected } =
   HH.div
@@ -120,19 +127,26 @@ square { coordinates, color, piece, selected } =
           (CSS.Size.px 3.0)
           CSS.Color.blue
 
-handleQuery ::
-     forall m a. Query a
+handleQuery
+  :: forall m a
+   . MonadStore GS.Action GS.Store m
+  => Sq
+  -> Query a
   -> H.HalogenM State Action () Output m (Maybe a)
-handleQuery = case _ of
+handleQuery sq = case _ of
   ReceivePiece tuple -> do
     H.modify_ _ { piece = Just tuple }
+    state <- H.get
+    Store.updateStore $ GS.SetSquare sq state
     pure Nothing
   GivePiece reply -> do
     { piece } <- H.get
     H.modify_ _ { piece = Nothing }
     case piece of
       Nothing -> pure Nothing
-      Just p  -> pure $ Just (reply p)
+      Just p  -> do
+        Store.updateStore $ GS.ClearSquare sq
+        pure $ Just (reply p)
   Unselect -> do
     H.modify_ _ { selected = false }
     pure Nothing
@@ -140,8 +154,9 @@ handleQuery = case _ of
     H.modify_ _ { selected = true }
     pure Nothing
 
-handleAction ::
-     forall m. MonadAff m
+handleAction
+  :: forall m. MonadAff m
+  => MonadStore GS.Action GS.Store m
   => Sq
   -> Action
   -> H.HalogenM State Action ChildSlots Output m Unit
@@ -173,3 +188,6 @@ handleAction sq = case _ of
       for_ (genericDecodeAeson defaultOptions res.body)
         $ \(tuple :: Tuple Color PieceType) -> do
           H.modify_ _ { piece = Just tuple }
+
+    state <- H.get
+    Store.updateStore $ GS.SetSquare sq state

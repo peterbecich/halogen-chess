@@ -24,6 +24,7 @@
   , "routing"
   , "routing-duplex"
   , "tuples"
+  , "unordered-collections"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs", "app/**/*.purs" ]

@@ -6,12 +6,9 @@ import Data.Array (length)
 import Data.Lens (view)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-import Data.Generic.Rep (class Generic)
-import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
-import Data.Argonaut.Aeson.Options as Argonaut
 import Halogen as H
-import Data.Argonaut.Core (Json, stringify)
-import Data.Argonaut.Encode.Class (class EncodeJson, encodeJson)
+import Data.Argonaut.Core (Json)
+import Data.Argonaut.Encode.Class (encodeJson)
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
 import Effect.Class.Console (logShow)
@@ -21,16 +18,17 @@ import Affjax (Error, Response, get, post)
 import Affjax.StatusCode (StatusCode(StatusCode))
 import Affjax.ResponseFormat (json, string)
 import Data.Either (Either(Left, Right))
+import Halogen.Store.Monad (class MonadStore)
 import Data.Traversable (for_)
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
+import Game.Sq (Sq'(Sq'))
 import Game.Chess.Internal.Square (Sq)
 import Game.Chess.Board (Board(Board), _Board)
 import Game.Chess.Move (Move(Move))
 import Halogen.Store.Monad as Store
 import Game.Store as GS
 import Halogen.Store.Connect (Connected, connect)
-import Halogen.Store.Monad (class MonadStore)
 import Halogen.Store.Select (selectAll)
 import Game.Components.Square as Square
 import CSS as CSS
@@ -39,8 +37,7 @@ import CSS.Display as CSS.Display
 
 
 data Action
-  = CheckButtonState
-  | Initialize
+  = Initialize
   | ReceiveSquare Square.Output
 
 type State =
@@ -51,17 +48,6 @@ type State =
   , destinationSelection :: Maybe Sq
   , fenPosition     :: String
   }
-
-data Sq' = Sq' Sq
-instance encodeJsonSq' :: EncodeJson Sq' where
-  encodeJson = genericEncodeAeson Argonaut.defaultOptions
-derive instance gensq :: Generic Sq' _
-instance showsq :: Show Sq' where
-  show x = stringify $ encodeJson x
-instance eqsq :: Eq Sq' where
-  eq x y = eq (show x) (show y)
-instance ordsq :: Ord Sq' where
-  compare x y = compare (show x) (show y)
 
 type ChildSlots = ( square :: Square.SquareSlot Sq' )
 
@@ -90,7 +76,7 @@ deriveState { context } =
   , board: context.board
   , sourceSelection: Nothing
   , destinationSelection: Nothing
-  , fenPosition: mempty
+  , fenPosition: context.fenPosition
   }
 
 initialState :: forall i. i -> State
@@ -103,8 +89,9 @@ initialState _ =
   , fenPosition: mempty
   }
 
-render ::
-     forall m. MonadAff m
+render
+  :: forall m. MonadAff m
+  => MonadStore GS.Action GS.Store m
   => State
   -> H.ComponentHTML Action ChildSlots m
 render state = HH.div style (h <> [HH.text state.fenPosition])
@@ -147,13 +134,11 @@ handleAction = case _ of
           Right (moveResponse :: Response String) ->
             if (moveResponse.status == StatusCode 200)
             then do
-              void $ H.modify _ {fenPosition = moveResponse.body}
+              H.modify_ _ {fenPosition = moveResponse.body}
               Store.updateStore $ GS.SetFenPosition moveResponse.body
               mPiece <- H.request Square._square (Sq' from) Square.GivePiece
-              case mPiece of
-                Nothing -> pure unit
-                Just piece -> do
-                  H.tell Square._square (Sq' sq) (pure $ Square.ReceivePiece piece)
+              for_ mPiece $ \piece -> do
+                H.tell Square._square (Sq' sq) (pure $ Square.ReceivePiece piece)
             else logShow $ "illegal move"
 
       Tuple (Just src) (Just dst) -> do
@@ -162,7 +147,7 @@ handleAction = case _ of
           dstSlot = Sq' dst
         H.tell Square._square srcSlot (pure Square.Unselect)
         H.tell Square._square dstSlot (pure Square.Unselect)
-        void $ H.modify _ { sourceSelection = Just sq, destinationSelection = Nothing }
+        H.modify_ _ { sourceSelection = Just sq, destinationSelection = Nothing }
         H.tell Square._square (Sq' sq) (pure Square.Select)
 
       Tuple Nothing (Just _) -> do
@@ -175,7 +160,8 @@ handleAction = case _ of
     logShow "Initialize"
 
     s <- H.get
-    logShow $ "Board: " <> show (length (view _Board s.board))
+    logShow $ "Board squares: " <> show (length (view _Board s.board))
+    logShow $ "FEN position: " <> s.fenPosition
     when (length (view _Board s.board) == 0) do
       logShow "Board has 0 items"
       eBoardResponse :: Either Error (Response Json) <-
@@ -187,7 +173,7 @@ handleAction = case _ of
             $ \(board :: Board) -> do
               logShow "got board"
               Store.updateStore $ GS.SetBoard board
-              H.modify _ {board = board}
+              H.modify_ _ {board = board}
       eStartPositionResponse :: Either Error (Response String) <-
         liftAff $ get string "/start"
       case eStartPositionResponse of
@@ -195,5 +181,3 @@ handleAction = case _ of
         Right startResponse -> do
           void $ H.modify _ {fenPosition = startResponse.body}
           logShow $ "got start pos: " <> startResponse.body
-
-  CheckButtonState -> pure unit
