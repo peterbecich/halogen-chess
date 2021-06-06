@@ -14,7 +14,7 @@ import Language.PureScript.Bridge
     (BridgePart, Language (Haskell), SumType, defaultBridge, mkSumType)
 import Language.PureScript.Bridge.PSTypes ()
 
-import Game.Chess (Color (..), PieceType (..), Sq (..), Ply (..), Position (..))
+import Game.Chess (Color (..), PieceType (..), Ply (..), Position (..), Sq (..))
 
 import Game.Chess.Board (Board)
 import Game.Chess.Move (Move)

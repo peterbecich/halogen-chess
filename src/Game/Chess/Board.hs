@@ -29,7 +29,7 @@ import Game.Chess
 import Game.Chess.Move (Move (Move))
 import Game.Chess.Orphans ()
 
-data Board = Board [Sq]
+newtype Board = Board [Sq]
 
 allPieces :: Board
 allPieces = Board $ enumFrom minBound
@@ -65,4 +65,4 @@ checkMove' (Move fenPosition from to) = do
   case mPosition of
     Nothing -> Nothing
     Just position -> do
-      fmap toFEN $ checkMove from to position
+      toFEN <$> checkMove from to position

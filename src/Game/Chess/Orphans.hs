@@ -1,14 +1,15 @@
-{-# LANGUAGE DeriveAnyClass     #-}
-{-# LANGUAGE DeriveGeneric      #-}
-{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE DeriveAnyClass      #-}
+{-# LANGUAGE DeriveGeneric       #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving  #-}
 
 module Game.Chess.Orphans where
 
 import Data.Aeson
 import GHC.Generics
 
-import Game.Chess (Color (..), PieceType (..), Sq (..), Ply (..), Position, toFEN, fromFEN)
+import Game.Chess
+    (Color (..), PieceType (..), Ply (..), Position, Sq (..), fromFEN, toFEN)
 
 
 deriving instance Generic Sq

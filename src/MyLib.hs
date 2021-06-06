@@ -98,7 +98,7 @@ chessServer :: FilePath -> Server ChessServer
 chessServer clientDir = return allPieces
   :<|> return . toRF
   :<|> (\sq -> return (if isLight sq then White else Black))
-  :<|> (\sq -> return $ pieceAt startpos sq)
+  :<|> (return . pieceAt startpos)
   :<|> return (toFEN startpos)
   :<|> moveServer
   :<|> serveDirectoryWebApp clientDir
