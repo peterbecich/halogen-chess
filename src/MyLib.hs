@@ -15,6 +15,7 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.UTF8 as UTF8
 import           Data.Data
+import           Data.Maybe (fromMaybe)
 import qualified Data.Text as Text
 import           Data.Text.Encoding (encodeUtf8)
 import           Data.Typeable
@@ -23,10 +24,7 @@ import           Network.Wai.Handler.Warp
 import qualified Network.Wai.Middleware.Gzip as Gzip
 import           Servant
 import           Servant.API (Accept (..))
-
-import Game.Chess.Orphans
-
-import Game.Chess.Move (Move)
+import           System.Environment (lookupEnv)
 
 import Game.Chess
     ( Color (..)
@@ -41,6 +39,8 @@ import Game.Chess
     , toRF
     )
 import Game.Chess.Board (Board, allPieces, checkMove')
+import Game.Chess.Move (Move)
+import Game.Chess.Orphans
 
 instance Accept HTML where
   contentType _ = let
@@ -79,14 +79,14 @@ moveServer move = do
         $ err403 { errBody = UTF8.fromString "illegal chess move" }
     Just position -> return position
 
-chessServer :: Server ChessServer
-chessServer = return allPieces
+chessServer :: FilePath -> Server ChessServer
+chessServer clientDir = return allPieces
   :<|> return . toRF
   :<|> (\sq -> return (if isLight sq then White else Black))
   :<|> (\sq -> return $ pieceAt startpos sq)
   :<|> return (toFEN startpos)
   :<|> moveServer
-  :<|> serveDirectoryWebApp "/app/static"
+  :<|> serveDirectoryWebApp clientDir
 
 type RootServer = Get '[HTML] RawHtml
   :<|> "chess" :> Get '[HTML] RawHtml
@@ -104,8 +104,16 @@ api = Proxy
 
 someFunc :: IO ()
 someFunc = do
-  root <- liftIO $ BSL.readFile "/app/static/index.html"
+  mClientDir <- lookupEnv "CLIENT_DIR"
+  let
+    rootDir :: FilePath
+    rootDir = fromMaybe "static" mClientDir
+    rootFile :: FilePath
+    rootFile = rootDir <> "/index.html"
+
+  putStrLn $ "Root file: " <> rootFile
+  root <- liftIO $ BSL.readFile rootFile
   putStrLn $ "Start pos: " <> toFEN startpos
   run 8080
     . Gzip.gzip Gzip.def
-    $ serve api (rootServer root :<|> chessServer)
+    $ serve api (rootServer root :<|> chessServer rootDir)
