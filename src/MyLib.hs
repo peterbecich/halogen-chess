@@ -10,19 +10,35 @@ import Prelude
 import           Control.Lens (view)
 import           Control.Monad (forM, mapM)
 import           Control.Monad.IO.Class (MonadIO, liftIO)
-import           Data.Aeson
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.UTF8 as UTF8
-import           Data.Data
+import           Data.Data (Proxy (..))
 import           Data.Maybe (fromMaybe)
 import qualified Data.Text as Text
 import           Data.Text.Encoding (encodeUtf8)
-import           Data.Typeable
 import           Network.HTTP.Media ((//), (/:))
-import           Network.Wai.Handler.Warp
+import           Network.Wai.Handler.Warp (run)
 import qualified Network.Wai.Middleware.Gzip as Gzip
 import           Servant
+    ( Accept (contentType)
+    , Get
+    , Handler
+    , JSON
+    , MimeRender (..)
+    , PlainText
+    , Post
+    , Raw
+    , ReqBody
+    , Server
+    , ServerError (errBody)
+    , err403
+    , serve
+    , serveDirectoryWebApp
+    , throwError
+    , type (:<|>) (..)
+    , type (:>)
+    )
 import           Servant.API (Accept (..))
 import           System.Environment (lookupEnv)
 
@@ -40,7 +56,6 @@ import Game.Chess
     )
 import Game.Chess.Board (Board, allPieces, checkMove')
 import Game.Chess.Move (Move)
-import Game.Chess.Orphans
 
 instance Accept HTML where
   contentType _ = let
