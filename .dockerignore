@@ -45,3 +45,6 @@ cabal.project.local~
 /.spago
 
 /.cache
+
+**/*~
+

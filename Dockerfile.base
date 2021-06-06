@@ -1,14 +1,28 @@
-FROM haskell:8.10
+FROM haskell:8.10-buster
 
 COPY . /app
 
-EXPOSE 8080
-
 RUN apt update \
-        && apt upgrade -y\
-        && apt install libpq-dev -y
+    && apt upgrade -y\
+    && apt install libpq-dev libc6 libc6-dev -y
+
+WORKDIR /app
 
 RUN cabal update
 
-RUN cd app \
-        && cabal build all --only-dependencies
+RUN cd /app \
+    && cabal build all --only-dependencies
+
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install -y nodejs
+
+RUN stack upgrade
+
+RUN npm install -g npm
+
+RUN npm install -g purescript
+
+RUN npm install -g spago
+
+RUN cd /app \
+    && spago build --deps-only

@@ -86,7 +86,7 @@ chessServer = return allPieces
   :<|> (\sq -> return $ pieceAt startpos sq)
   :<|> return (toFEN startpos)
   :<|> moveServer
-  :<|> serveDirectoryWebApp "static"
+  :<|> serveDirectoryWebApp "/app/static"
 
 type RootServer = Get '[HTML] RawHtml
   :<|> "chess" :> Get '[HTML] RawHtml
@@ -104,7 +104,7 @@ api = Proxy
 
 someFunc :: IO ()
 someFunc = do
-  root <- liftIO $ BSL.readFile "static/index.html"
+  root <- liftIO $ BSL.readFile "/app/static/index.html"
   putStrLn $ "Start pos: " <> toFEN startpos
   run 8080
     . Gzip.gzip Gzip.def
