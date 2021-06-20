@@ -15,7 +15,7 @@ import Data.Newtype (class Newtype)
 import Data.Symbol (SProxy(SProxy))
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
-import Game.Chess.Internal.Square (Sq)
+import Game.Chess.Internal.Square (Square)
 import Prim (String)
 
 import Prelude
@@ -23,8 +23,8 @@ import Prelude
 newtype Move =
     Move {
       fenPosition :: String
-    , from :: Sq
-    , to :: Sq
+    , from :: Square
+    , to :: Square
     }
 
 instance encodeMove :: Encode Move where
@@ -39,7 +39,7 @@ derive instance genericMove :: Generic Move _
 derive instance newtypeMove :: Newtype Move _
 
 --------------------------------------------------------------------------------
-_Move :: Iso' Move { fenPosition :: String, from :: Sq, to :: Sq}
+_Move :: Iso' Move { fenPosition :: String, from :: Square, to :: Square}
 _Move = _Newtype
 
 --------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ import Data.Traversable (for_)
 import Data.Argonaut.Aeson.Decode.Generic (genericDecodeAeson)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Game.Sq (Sq'(Sq'))
-import Game.Chess.Internal.Square (Sq)
+import Game.Chess.Internal.Square (Square)
 import Game.Chess.Board (Board(Board), _Board)
 import Game.Chess.Move (Move(Move))
 import Halogen.Store.Monad as Store
@@ -44,8 +44,8 @@ type State =
   { toggleCount     :: Int
   , buttonState     :: Maybe Boolean
   , board           :: Board
-  , sourceSelection :: Maybe Sq
-  , destinationSelection :: Maybe Sq
+  , sourceSelection :: Maybe Square
+  , destinationSelection :: Maybe Square
   , fenPosition     :: String
   }
 
@@ -96,7 +96,7 @@ render
   -> H.ComponentHTML Action ChildSlots m
 render state = HH.div style (h <> [HH.text state.fenPosition])
   where
-    b :: Array Sq
+    b :: Array Square
     b = view _Board state.board
     h :: Array (HH.ComponentHTML Action ChildSlots m)
     h = flip map b $ \sq ->

@@ -4,7 +4,7 @@ import Prelude
 
 import Game.Chess.Board (Board(Board))
 import Game.Sq(Sq'(Sq'), State)
-import Game.Chess.Internal.Square (Sq)
+import Game.Chess.Internal.Square (Square)
 
 import Data.HashMap (HashMap, empty, insert, delete)
 
@@ -24,8 +24,8 @@ initialStore =
 data Action
   = SetBoard Board
   | SetFenPosition String
-  | SetSquare Sq State
-  | ClearSquare Sq
+  | SetSquare Square State
+  | ClearSquare Square
 
 reduce :: Store -> Action -> Store
 reduce store = case _ of

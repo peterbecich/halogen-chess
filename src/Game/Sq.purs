@@ -5,7 +5,7 @@ import Prelude
 import Data.Argonaut.Encode.Class (class EncodeJson, encodeJson)
 import Data.Generic.Rep (class Generic)
 import Data.Argonaut.Aeson.Encode.Generic (genericEncodeAeson)
-import Game.Chess.Internal.Square (Sq)
+import Game.Chess.Internal.Square (Square)
 import Data.Argonaut.Aeson.Options as Argonaut
 import Data.Argonaut.Core (Json, stringify)
 import Data.Hashable (class Hashable, hash)
@@ -15,14 +15,14 @@ import Data.Maybe (Maybe(..))
 
 
 type State =
-  { sq :: Sq
+  { sq :: Square
   , coordinates :: Tuple Int Int
   , color :: Color
   , piece :: Maybe (Tuple Color PieceType)
   , selected :: Boolean
   }
 
-data Sq' = Sq' Sq
+data Sq' = Sq' Square
 instance encodeJsonSq' :: EncodeJson Sq' where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 derive instance gensq :: Generic Sq' _

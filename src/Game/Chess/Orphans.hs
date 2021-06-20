@@ -9,16 +9,10 @@ import Data.Aeson
 import GHC.Generics
 
 import Game.Chess
-    (Color (..), PieceType (..), Ply (..), Position, Sq (..), fromFEN, toFEN)
+    (Color (..), PieceType (..), Ply (..), Position, Square (..), fromFEN, toFEN)
 
-
-deriving instance Generic Sq
-deriving instance Generic Color
-deriving instance Generic PieceType
-deriving instance Generic Ply
-
-deriving instance ToJSON Sq
-deriving instance FromJSON Sq
+deriving instance ToJSON Square
+deriving instance FromJSON Square
 
 deriving instance ToJSON Color
 deriving instance FromJSON Color

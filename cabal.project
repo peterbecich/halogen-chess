@@ -4,3 +4,8 @@ source-repository-package
   type: git
   location: https://github.com/peterbecich/purescript-bridge.git
   tag: e13bd8ce90e2f73c821c3ace9c54d1b7a655b0dc
+
+source-repository-package
+  type: git
+  location: https://github.com/peterbecich/chessIO.git
+  tag: c8c947769287bb17f4b3a6c3e5513c79eef0601a

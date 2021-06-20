@@ -5,7 +5,7 @@ import Prelude
 import Halogen.Store.Connect (Connected, connect)
 import Game.Sq (Sq'(Sq'), State)
 import Game.Chess.Internal (Color(..), PieceType)
-import Game.Chess.Internal.Square (Sq)
+import Game.Chess.Internal.Square (Square)
 import Data.Maybe (Maybe(..))
 import Data.Argonaut.Encode.Class (encodeJson)
 import Prim (Boolean, Int, Row, Type, Array)
@@ -48,12 +48,12 @@ data Query a
   | ReceivePiece (Tuple Color PieceType)
   | GivePiece (Tuple Color PieceType -> a)
 
-data Output = Clicked Sq
+data Output = Clicked Square
 
 type SquareSlot = H.Slot Query Output
 
 
-initialState :: forall i. Sq -> i -> State
+initialState :: forall i. Square -> i -> State
 initialState sq' _ =
   { sq: sq'
   , coordinates: Tuple 1 2
@@ -68,7 +68,7 @@ type ChildSlots = ()
 _square :: Proxy "square"
 _square = Proxy
 
-deriveState :: forall i. Sq -> Connected GS.Store i -> State
+deriveState :: forall i. Square -> Connected GS.Store i -> State
 deriveState sq { context } = case lookup (Sq' sq) context.squares of
   Nothing -> initialState sq 1.0
   Just s ->  s
@@ -77,7 +77,7 @@ component
   :: forall i m
    . MonadAff m
   => MonadStore GS.Action GS.Store m
-  => Sq
+  => Square
   -> H.Component Query i Output m
 component sq' = connect selectAll $ H.mkComponent
   { initialState: deriveState sq'
@@ -130,7 +130,7 @@ square { coordinates, color, piece, selected } =
 handleQuery
   :: forall m a
    . MonadStore GS.Action GS.Store m
-  => Sq
+  => Square
   -> Query a
   -> H.HalogenM State Action () Output m (Maybe a)
 handleQuery sq = case _ of
@@ -157,7 +157,7 @@ handleQuery sq = case _ of
 handleAction
   :: forall m. MonadAff m
   => MonadStore GS.Action GS.Store m
-  => Sq
+  => Square
   -> Action
   -> H.HalogenM State Action ChildSlots Output m Unit
 handleAction sq = case _ of

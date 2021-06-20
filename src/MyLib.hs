@@ -46,13 +46,16 @@ import Game.Chess
     ( Color (..)
     , PieceType (..)
     , Position
-    , Sq (..)
+    , Square (..)
     , fromFEN
     , isLight
     , pieceAt
     , startpos
     , toFEN
-    , toRF
+    , unRank
+    , unFile
+    , rank
+    , file
     )
 import Game.Chess.Board (Board, allPieces, checkMove')
 import Game.Chess.Move (Move)
@@ -68,10 +71,10 @@ type MoveServer
 
 type ChessServer
   = "board" :> (Get '[JSON] Board)
-  :<|> "rf"    :> ReqBody '[JSON] Sq :> Post '[JSON] (Int, Int)
-  :<|> "color" :> ReqBody '[JSON] Sq :> Post '[JSON] Color
+  :<|> "rf"    :> ReqBody '[JSON] Square :> Post '[JSON] (Int, Int)
+  :<|> "color" :> ReqBody '[JSON] Square :> Post '[JSON] Color
   :<|> "pieceAtStartingPosition"
-       :> ReqBody '[JSON] Sq
+       :> ReqBody '[JSON] Square
        :> Post '[JSON] (Maybe (Color, PieceType))
   :<|> "start" :> Get '[PlainText] String
   :<|> MoveServer
@@ -96,7 +99,7 @@ moveServer move = do
 
 chessServer :: FilePath -> Server ChessServer
 chessServer clientDir = return allPieces
-  :<|> return . toRF
+  :<|> (\sq -> return (unRank $ rank sq, unFile $ file sq))
   :<|> (\sq -> return (if isLight sq then White else Black))
   :<|> (return . pieceAt startpos)
   :<|> return (toFEN startpos)

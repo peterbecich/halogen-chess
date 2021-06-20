@@ -15,13 +15,13 @@ import Data.Newtype (class Newtype)
 import Data.Symbol (SProxy(SProxy))
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
-import Game.Chess.Internal.Square (Sq)
+import Game.Chess.Internal.Square (Square)
 import Prim (Array)
 
 import Prelude
 
 newtype Board =
-    Board (Array Sq)
+    Board (Array Square)
 
 instance encodeBoard :: Encode Board where
   encode = genericEncode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
@@ -35,6 +35,6 @@ derive instance genericBoard :: Generic Board _
 derive instance newtypeBoard :: Newtype Board _
 
 --------------------------------------------------------------------------------
-_Board :: Iso' Board (Array Sq)
+_Board :: Iso' Board (Array Square)
 _Board = _Newtype
 --------------------------------------------------------------------------------

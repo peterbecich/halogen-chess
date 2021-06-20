@@ -6,13 +6,13 @@ module Game.Chess.Move where
 
 import Prelude
 
-import Game.Chess (Position, Sq)
+import Game.Chess (Position, Square)
 import Game.Chess.Orphans ()
 
 import Data.Aeson
 import GHC.Generics
 
-data Move = Move { fenPosition :: String, from :: Sq, to :: Sq }
+data Move = Move { fenPosition :: String, from :: Square, to :: Square }
 
 deriving instance Generic Move
 

@@ -16,10 +16,9 @@ import           Data.Bits (Bits (unsafeShiftL, (.|.)))
 import           GHC.Generics
 
 import Game.Chess
-    ( IsSquare (toIndex)
-    , Ply (..)
+    ( Ply (..)
     , Position
-    , Sq (..)
+    , Square
     , doPly
     , fromFEN
     , legalPlies
@@ -29,20 +28,20 @@ import Game.Chess
 import Game.Chess.Move (Move (Move))
 import Game.Chess.Orphans ()
 
-newtype Board = Board [Sq]
+newtype Board = Board [Square]
 
 allPieces :: Board
-allPieces = Board $ enumFrom minBound
+allPieces = Board $ enumFromTo minBound maxBound
 
 deriving instance Generic Board
 
 deriving instance ToJSON Board
 deriving instance FromJSON Board
 
--- copied from https://github.com/peterbecich/chessIO/blob/0d61d8352096e4f893c13a8ff7b275b9a76d2de9/src/Game/Chess/Internal.hs#L237-L239
-move :: (IsSquare from, IsSquare to) => from -> to -> Ply
-move (toIndex -> from) (toIndex -> to) =
-  Ply $ fromIntegral to .|. fromIntegral from `unsafeShiftL` 6
+-- copied from https://github.com/peterbecich/chessIO/blob/30455cc9e200240125986827dfeb363542e0d4a2/src/Game/Chess/Internal.hs#L249-L251
+move :: Square -> Square -> Ply
+move _ _ = undefined
+  -- Ply $ fromIntegral to .|. fromIntegral from `unsafeShiftL` 6
 
 -- copied
 -- https://github.com/peterbecich/chessIO/blob/0d61d8352096e4f893c13a8ff7b275b9a76d2de9/src/Game/Chess/Internal.hs#L373-L376
@@ -53,7 +52,7 @@ doPly' p m
   | otherwise             = Nothing
 
 checkMove
-  :: Sq -> Sq -> Position -> Maybe Position
+  :: Square -> Square -> Position -> Maybe Position
 checkMove from to start = doPly' start mv
   where
     mv = move from to
