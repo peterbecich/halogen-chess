@@ -17,8 +17,8 @@ jobs:
       fail-fast: false
       matrix:
         versions:
-          - ghc: '8.10.5'
-            cabal: '3.4'
+          - ghc: '8.10.7'
+            cabal: 'latest'
     steps:
     - uses: actions/checkout@v2
 

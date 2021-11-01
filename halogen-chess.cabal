@@ -17,7 +17,7 @@ library
                     , Game.Chess.Board
                     , Game.Chess.Move
 
-    build-depends:    base ^>=4.14.1.0
+    build-depends:    base
                     , aeson
                     , bytestring
                     , chessIO ==0.6.*
@@ -36,7 +36,7 @@ library
 executable halogen-chess
     main-is:          Main.hs
 
-    build-depends:    base ^>=4.14.1.0
+    build-depends:    base
                     , halogen-chess
 
     hs-source-dirs:   app
@@ -45,7 +45,7 @@ executable halogen-chess
 executable generate-purescript
     main-is:          GeneratePurescript.hs
 
-    build-depends:    base ^>=4.14.1.0
+    build-depends:    base
                     , halogen-chess
                     , purescript-bridge
                     , text
