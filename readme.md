@@ -11,7 +11,7 @@ This project uses:
 * [Purescript Routing Duplex](https://github.com/natefaubion/purescript-routing-duplex)
 * [Haskell library chessIO](https://github.com/mlang/chessIO)
 
-Lots of inefficiencies in this single-page app; will be fixed later!
+Buggy, and lots of inefficiencies in this single-page app; will be fixed later!
 
 ![Chess board](doc/chessboard.png)
 
