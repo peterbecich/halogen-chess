@@ -10,5 +10,5 @@ in pkgs.haskell-nix.project {
     name = "halogen-chess";
     src = ./.;
   };
-  compiler-nix-name = "ghc8107";
+  compiler-nix-name = "ghc924";
 }
