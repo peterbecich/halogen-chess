@@ -9,6 +9,7 @@ import Halogen.HTML.CSS as HCSS
 import CSS as CSS
 import CSS.Border as CSS.Border
 import CSS.Size as CSS.Size
+import Color as Colors
 import CSS.Color as CSS.Color
 import CSS.Display as CSS.Display
 import CSS.Background as CSS.Background
@@ -70,6 +71,7 @@ render _ = HH.nav [ buttons ]
     [ border, HE.onClick \_ -> GoToPageC ] [ HH.text "Page C" ]
   ]
   where
+    blue = Colors.rgb 0 0 255
     -- https://www.w3schools.com/css/css_boxmodel.asp
     -- https://pursuit.purescript.org/packages/purescript-css/5.0.1/docs/CSS
     buttons = HCSS.style do
@@ -85,7 +87,7 @@ render _ = HH.nav [ buttons ]
       -- CSS.Geometry.marginLeft $ CSS.Size.pt 60.0
       CSS.Geometry.width $ CSS.Size.pt 350.0
       CSS.Geometry.height $ CSS.Size.pt 60.0
-      CSS.Background.backgroundColor $ CSS.Color.lighten 0.4 CSS.Color.blue
+      CSS.Background.backgroundColor $ CSS.Color.lighten 0.4 blue
 
 
     border = HCSS.style do
@@ -93,7 +95,7 @@ render _ = HH.nav [ buttons ]
       CSS.Geometry.marginLeft $ CSS.Size.pt 10.0
       CSS.Geometry.width $ CSS.Size.pt 90.0
       CSS.Geometry.height $ CSS.Size.pt 30.0
-      CSS.Background.backgroundColor $ CSS.Color.lighten 0.3 CSS.Color.blue
+      CSS.Background.backgroundColor $ CSS.Color.lighten 0.3 blue
       CSS.Border.border
         CSS.Border.solid
         (CSS.Size.px 2.0)

@@ -20,8 +20,9 @@ import Data.HashMap (lookup)
 import Data.Argonaut.Aeson.Options (defaultOptions)
 import Data.Traversable (for_)
 import Halogen.HTML.CSS as CSS
+import Color as Colors
 import CSS.Color as CSS.Color
-import Affjax (Error, Response, post)
+import Affjax.Web (Error, Response, post)
 import Affjax.ResponseFormat (json)
 import CSS.Background as Background
 import CSS.Border as CSS.Border
@@ -111,11 +112,13 @@ square { coordinates, color, piece, selected } =
     [ Piece.pieceHTML piece
     ]
   where
+  blue = Colors.rgb 0 0 255
+
   color' = case color of
     Black ->
-      Background.backgroundColor $ CSS.Color.lighten 0.6 CSS.Color.black
+      Background.backgroundColor $ CSS.Color.lighten 0.6 Colors.black
     White ->
-      Background.backgroundColor $ CSS.Color.white
+      Background.backgroundColor $ Colors.white
 
   border = case selected of
     false -> CSS.style color'
@@ -125,7 +128,7 @@ square { coordinates, color, piece, selected } =
         CSS.Border.border
           CSS.Border.dashed
           (CSS.Size.px 3.0)
-          CSS.Color.blue
+          blue
 
 handleQuery
   :: forall m a

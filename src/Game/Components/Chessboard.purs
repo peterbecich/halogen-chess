@@ -14,7 +14,7 @@ import Type.Proxy (Proxy(..))
 import Effect.Class.Console (logShow)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Affjax.RequestBody as RequestBody
-import Affjax (Error, Response, get, post)
+import Affjax.Web (Error, Response, get, post)
 import Affjax.StatusCode (StatusCode(StatusCode))
 import Affjax.ResponseFormat (json, string)
 import Data.Either (Either(Left, Right))

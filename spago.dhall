@@ -2,10 +2,12 @@
 , dependencies =
   [ "aff"
   , "affjax"
+  , "affjax-web"
   , "argonaut-aeson-generic"
   , "argonaut-codecs"
   , "argonaut-core"
   , "arrays"
+  , "colors"
   , "console"
   , "css"
   , "effect"

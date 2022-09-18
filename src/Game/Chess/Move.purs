@@ -12,11 +12,11 @@ import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Data.Symbol (SProxy(SProxy))
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Game.Chess.Internal.Square (Sq)
 import Prim (String)
+import Type.Proxy (Proxy(Proxy))
 
 import Prelude
 
