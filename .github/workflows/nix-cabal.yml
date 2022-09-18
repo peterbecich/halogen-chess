@@ -1,0 +1,21 @@
+name: "Nix Build with Cabal"
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  tests:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+    # https://github.com/marketplace/actions/install-nix
+    - name: Install Nix
+      uses: cachix/install-nix-action@v17
+      with:
+        extra_nix_config: |
+          trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+          substituters = https://hydra.iohk.io https://cache.nixos.org/
+    - run: nix build -f default.nix

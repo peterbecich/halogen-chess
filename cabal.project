@@ -4,3 +4,4 @@ source-repository-package
   type: git
   location: https://github.com/peterbecich/purescript-bridge.git
   tag: e13bd8ce90e2f73c821c3ace9c54d1b7a655b0dc
+  --sha256: 1dckzn2smzz7abdjlbhwd8cgjvbpyyizdj6nv3rdldy4sl5b9493
