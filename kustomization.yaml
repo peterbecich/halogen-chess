@@ -1,0 +1,15 @@
+configMapGenerator:
+- name: example-configmap-2
+  literals:
+  - FOO=Bar
+
+
+resources:
+  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/kubernetes.yml
+  - https://raw.githubusercontent.com/reactive-tech/kubegres/v1.16/kubegres.yaml
+  - base/keycloak.yaml
+  - base/keycloak_postgres_instance.yaml
+  - base/keycloak_postgres_secret.yaml
+
+  - base/app_postgres_instance.yaml
+  - base/app_postgres_secret.yaml

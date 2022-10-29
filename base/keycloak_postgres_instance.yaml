@@ -1,0 +1,29 @@
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: keycloak-postgresql-db
+
+spec:
+
+   replicas: 1
+   image: postgres:14.1
+   # port: 5433
+
+   database:
+     size: 200Mi
+
+   env:
+      - name: POSTGRES_DB
+        value: keycloak
+
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: keycloak-postgres-secret
+              key: superUserPassword
+
+      - name: POSTGRES_REPLICATION_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: keycloak-postgres-secret
+              key: replicationUserPassword

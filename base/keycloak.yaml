@@ -1,0 +1,23 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: keycloak
+spec:
+  instances: 1
+  serverConfiguration:
+    - name: db
+      value: postgres
+    - name: db-url-database
+      value: postgres
+    - name: db-url-host
+      value: keycloak-postgresql-db
+    - name: db-username
+      value: postgres
+    - name: db-password
+      secret:
+        name: keycloak-postgres-secret
+        key: superUserPassword
+
+  hostname: localhost:8443
+  tlsSecret: example-tls-secret
+  disableDefaultIngress: true
