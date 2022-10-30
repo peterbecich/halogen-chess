@@ -29,6 +29,9 @@
             contents = [ flake.packages."halogen-chess:exe:halogen-chess" ];
             config = {
               Cmd = [ "halogen-chess" ];
+              Env = [
+                "CLIENT_DIR=/data"
+              ];
             };
           };
 
