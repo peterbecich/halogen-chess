@@ -7,28 +7,40 @@
     let
       supportedSystems = [
         "x86_64-linux"
-        "x86_64-darwin"
-        "aarch64-linux"
-        "aarch64-darwin"
       ];
     in
       flake-utils.lib.eachSystem supportedSystems (system:
-      let
-        overlays = [ haskellNix.overlay
-          (final: prev: {
-            hixProject =
-              final.haskell-nix.hix.project {
-                projectFileName = "cabal.project";
-                src = ./.;
-                evalSystem = "x86_64-linux";
-              };
-          })
-        ];
-        pkgs = import nixpkgs { inherit system overlays; inherit (haskellNix) config; };
-        flake = pkgs.hixProject.flake {};
-      in flake // {
-        legacyPackages = pkgs;
-      });
+        let
+          overlays = [ haskellNix.overlay
+                       (final: prev: {
+                         hixProject =
+                           final.haskell-nix.hix.project {
+                             projectFileName = "cabal.project";
+                             src = ./.;
+                             evalSystem = "x86_64-linux";
+                           };
+                       })
+                     ];
+
+          dockerImage = pkgs.dockerTools.buildImage {
+            name = "peterbecich/halogen-chess";
+            tag = "latest";
+            created = "now";
+            contents = [ flake.packages."halogen-chess:exe:halogen-chess" ];
+            config = {
+              Cmd = [ "halogen-chess" ];
+            };
+          };
+
+
+          pkgs = import nixpkgs { inherit system overlays; inherit (haskellNix) config; };
+          flake = pkgs.hixProject.flake {};
+        in flake // {
+
+          packages.default = flake.packages."halogen-chess:exe:halogen-chess";
+
+          packages.dockerImage = dockerImage;
+        });
 
   # --- Flake Local Nix Configuration ----------------------------
   nixConfig = {
