@@ -9,6 +9,7 @@ maintainer:         peterbecich@gmail.com
 license:            BSD-3-Clause
 license-file:       LICENSE
 extra-source-files: CHANGELOG.md
+Tested-With: GHC ==9.2.4 || ==9.4.2
 
 library
     exposed-modules:  MyLib

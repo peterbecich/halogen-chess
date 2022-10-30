@@ -1,64 +1,57 @@
-# modified from https://github.com/jgm/pandoc/blob/master/.github/workflows/ci.yml
+# https://kodimensional.dev/github-actions
 name: Haskell
 
 on:
-  push:
-    branches:
-    - '**'
-    paths-ignore: []
+  workflow_dispatch:
   pull_request:
-    paths-ignore: []
+    types: [synchronize, opened, reopened]
+  push:
+    branches: '**'
 
 jobs:
-  linux:
-
-    runs-on: ubuntu-20.04
+  cabal:
+    name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
+    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        versions:
-          - ghc: '9.2.4'
-            cabal: 'latest'
-          - ghc: '9.4.2'
-            cabal: 'latest'
+        os: [ubuntu-latest]
+        cabal: ["3.6.2.0"]
+        ghc:
+          - "9.2.4"
+          - "9.4.2"
+
     steps:
     - uses: actions/checkout@v2
 
-    # need to install older cabal/ghc versions from ppa repository
-
-    - name: Install recent cabal/ghc
-      uses: haskell/actions/setup@v1
+    - uses: haskell/actions/setup@v1.2
+      id: setup-haskell-cabal
+      name: Setup Haskell
       with:
-        ghc-version: ${{ matrix.versions.ghc }}
-        cabal-version: ${{ matrix.versions.cabal }}
+        ghc-version: ${{ matrix.ghc }}
+        cabal-version: ${{ matrix.cabal }}
 
-    # declare/restore cached things
-    # caching doesn't work for scheduled runs yet
-    # https://github.com/actions/cache/issues/63
+    - name: Configure
+      run: |
+        cabal configure --enable-tests --enable-benchmarks --enable-documentation --test-show-details=direct --write-ghc-environment-files=always
 
-    - name: Cache cabal global package db
-      id:   cabal-global
-      uses: actions/cache@v2
+    - name: Freeze
+      run: |
+        cabal freeze
+
+    - uses: actions/cache@v2
+      name: Cache ~/.cabal/store
       with:
-        path: |
-          ~/.cabal
-        key: ${{ runner.os }}-${{ matrix.versions.ghc }}-${{ matrix.versions.cabal }}-cabal-global-${{ hashFiles('cabal.project') }}
-
-    - name: Cache cabal work
-      id:   cabal-local
-      uses: actions/cache@v2
-      with:
-        path: |
-          dist-newstyle
-        key: ${{ runner.os }}-${{ matrix.versions.ghc }}-${{ matrix.versions.cabal }}-cabal-local
+        path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
+        key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
 
     - name: Install dependencies
       run: |
-          cabal update
-          cabal build all --dependencies-only --enable-tests --disable-optimization
+        cabal build all --only-dependencies
+
     - name: Build
       run: |
-          cabal build all --enable-tests --disable-optimization 2>&1 | tee build.log
+        cabal build all
+
     - name: Test
       run: |
-          cabal test all --disable-optimization
+        cabal test all
