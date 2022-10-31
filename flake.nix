@@ -49,8 +49,9 @@
           purs-nix = inputs.purs-nix { inherit system; };
 
           argonaut-aeson-generic = {
-            purs-nix-info.name = "foo";
-            info = {
+            # purs-nix-info.name = "foo";
+            purs-nix-info = {
+              name = "foo";
               dependencies =
                 with purs-nix.ps-pkgs;
                 [ argonaut
@@ -62,16 +63,16 @@
                   test-unit
                 ];
             };
-            purs-nix-info.dependencies =
-              with purs-nix.ps-pkgs;
-              [ argonaut
-                argonaut-codecs
-                argonaut-generic
-                console
-                effect
-                foreign-object
-                test-unit
-              ];
+            # purs-nix-info.dependencies =
+            #   with purs-nix.ps-pkgs;
+            #   [ argonaut
+            #     argonaut-codecs
+            #     argonaut-generic
+            #     console
+            #     effect
+            #     foreign-object
+            #     test-unit
+            #   ];
 
             src.git = {
               repo = "https://github.com/bentongxyz/purescript-argonaut-aeson-generic.git";
@@ -80,8 +81,9 @@
           };
 
           foreign-generic = {
-            purs-nix-info.name = "bar";
-            info = {
+
+            purs-nix-info = {
+              name = "bar";
               dependencies =
                 with purs-nix.ps-pkgs;
                 [ effect
@@ -93,16 +95,16 @@
                   identity
                 ];
             };
-            purs-nix-info.dependencies =
-              with purs-nix.ps-pkgs;
-              [ effect
-                foreign
-                foreign-object
-                ordered-collections
-                exceptions
-                record
-                identity
-              ];
+            # purs-nix-info.dependencies =
+            #   with purs-nix.ps-pkgs;
+            #   [ effect
+            #     foreign
+            #     foreign-object
+            #     ordered-collections
+            #     exceptions
+            #     record
+            #     identity
+            #   ];
 
             src.git = {
               repo = "https://github.com/jsparkes/purescript-foreign-generic.git";

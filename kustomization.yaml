@@ -5,7 +5,10 @@ configMapGenerator:
 
 
 resources:
+  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/keycloaks.k8s.keycloak.org-v1.yml
+  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/keycloakrealmimports.k8s.keycloak.org-v1.yml
   - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/kubernetes.yml
+
   - https://raw.githubusercontent.com/reactive-tech/kubegres/v1.16/kubegres.yaml
   - base/keycloak.yaml
   - base/keycloak_postgres_instance.yaml
@@ -13,3 +16,7 @@ resources:
 
   - base/app_postgres_instance.yaml
   - base/app_postgres_secret.yaml
+
+  - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml
+  - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml
+  - base/jenkins.yaml
