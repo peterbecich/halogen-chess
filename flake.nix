@@ -44,35 +44,26 @@
           pkgs = import nixpkgs { inherit system overlays; inherit (haskellNix) config; };
           flake = pkgs.hixProject.flake {};
 
-
           ps-tools = inputs.ps-tools.legacyPackages.${system};
-          purs-nix = inputs.purs-nix { inherit system; };
+          purs-nix = inputs.purs-nix {
+            inherit system;
+          };
 
-          argonaut-aeson-generic = {
-            # purs-nix-info.name = "foo";
-            purs-nix-info = {
-              name = "foo";
-              dependencies =
-                with purs-nix.ps-pkgs;
-                [ argonaut
-                  argonaut-codecs
-                  argonaut-generic
-                  console
-                  effect
-                  foreign-object
-                  test-unit
-                ];
-            };
-            # purs-nix-info.dependencies =
-            #   with purs-nix.ps-pkgs;
-            #   [ argonaut
-            #     argonaut-codecs
-            #     argonaut-generic
-            #     console
-            #     effect
-            #     foreign-object
-            #     test-unit
-            #   ];
+          argonaut-aeson-generic = purs-nix.build {
+            name = "argonaut-aeson-generic";
+            info =
+              { # version = "1.0.0";
+                dependencies =
+                  with purs-nix.ps-pkgs;
+                  [ argonaut
+                    argonaut-codecs
+                    argonaut-generic
+                    console
+                    effect
+                    foreign-object
+                    test-unit
+                  ];
+              };
 
             src.git = {
               repo = "https://github.com/bentongxyz/purescript-argonaut-aeson-generic.git";
@@ -80,35 +71,27 @@
             };
           };
 
-          foreign-generic = {
-
-            purs-nix-info = {
-              name = "bar";
-              dependencies =
-                with purs-nix.ps-pkgs;
-                [ effect
-                  foreign
-                  foreign-object
-                  ordered-collections
-                  exceptions
-                  record
-                  identity
-                ];
-            };
-            # purs-nix-info.dependencies =
-            #   with purs-nix.ps-pkgs;
-            #   [ effect
-            #     foreign
-            #     foreign-object
-            #     ordered-collections
-            #     exceptions
-            #     record
-            #     identity
-            #   ];
+          foreign-generic = purs-nix.build {
+            name = "foreign-generic";
+            info =
+              { # version = "0.15";
+                dependencies =
+                  with purs-nix.ps-pkgs;
+                  [ effect
+                    foreign
+                    foreign-object
+                    ordered-collections
+                    exceptions
+                    record
+                    identity
+                  ];
+              };
 
             src.git = {
-              repo = "https://github.com/jsparkes/purescript-foreign-generic.git";
+              # allRefs = true;
+              repo = "https://github.com/peterbecich/purescript-foreign-generic.git";
               rev = "844f2ababa2c7a0482bf871e1e6bf970b7e51313";
+              sha256 = "1df3n2yq8gmndldl0i1b3xqal50q12za61vgafdd13h1zf9cp3j3";
             };
           };
 
@@ -157,26 +140,29 @@
           packages.dockerImage = dockerImage;
 
           packages.purescriptBundle = purescriptBundle;
+
+
+          devShells.default =
+            pkgs.mkShell
+              { packages =
+                  with pkgs;
+                  [ entr
+                    nodejs
+                    (ps.command {})
+                    ps-tools.for-0_15.purescript-language-server
+                    purs-nix.esbuild
+                    purs-nix.purescript
+                  ];
+
+                shellHook =
+                  ''
+                  alias watch="find src | entr -s 'echo bundling; purs-nix bundle'"
+                  '';
+              };
+
         });
 
 
-          # devShells.default =
-          #   pkgs.mkShell
-          #     { packages =
-          #         with pkgs;
-          #         [ entr
-          #           nodejs
-          #           (ps.command {})
-          #           ps-tools.for-0_15.purescript-language-server
-          #           purs-nix.esbuild
-          #           purs-nix.purescript
-          #         ];
-
-          #       shellHook =
-          #         ''
-          #         alias watch="find src | entr -s 'echo bundling; purs-nix bundle'"
-          #         '';
-          #     };
 
 
   # --- Flake Local Nix Configuration ----------------------------
