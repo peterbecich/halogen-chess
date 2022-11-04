@@ -127,8 +127,8 @@
                     unordered-collections
                   ];
 
-                srcs = [ ./app ./src ];
-                # dir = ./.;
+                srcs = [ "app" "src" ];
+                dir = ./.;
               };
 
           purescriptBundle = ps.modules.Main.bundle {};
