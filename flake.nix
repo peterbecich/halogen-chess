@@ -31,12 +31,20 @@
             name = "peterbecich/halogen-chess";
             tag = "latest";
             created = "now";
-            contents = [ flake.packages."halogen-chess:exe:halogen-chess" ];
+            contents =
+              [ flake.packages."halogen-chess:exe:halogen-chess"
+                staticFiles
+                purescriptBundleDist
+                pkgs.bash
+              ];
             config = {
               Cmd = [ "halogen-chess" ];
               Env = [
                 "CLIENT_DIR=/data"
               ];
+              ExposedPorts = {
+                "8080/tcp" = {};
+              };
             };
           };
 
@@ -131,16 +139,38 @@
                 dir = ./.;
               };
 
-          purescriptBundle = ps.modules.Main.bundle {};
+          purescriptBundle = ps.modules.Main.bundle { };
+
+          staticFiles = pkgs.stdenv.mkDerivation {
+            name = "bundle-static-files";
+            src = ./static;
+            installPhase = ''
+              mkdir -p $out/data/
+              ls
+              cp -r * $out/data/
+            '';
+          };
+
+          purescriptBundleDist = pkgs.runCommand "purs-nix-make-bundle"
+            { buildInputs = [ (ps.command { srcs = [ ./app ./src ]; }) ]; }
+            ''
+            mkdir -p $out/data
+            purs-nix compile
+            purs-nix bundle
+            cp main.js $out/data/index.js
+            '';
 
         in flake // {
 
-          packages.default = flake.packages."halogen-chess:exe:halogen-chess";
+          packages =
+            { default = flake.packages."halogen-chess:exe:halogen-chess";
 
-          packages.dockerImage = dockerImage;
+              dockerImage = dockerImage;
 
-          packages.purescriptBundle = purescriptBundle;
+              purescriptBundle = purescriptBundle;
 
+              purescriptBundleDist = purescriptBundleDist;
+            };
 
           devShells.default =
             pkgs.mkShell
