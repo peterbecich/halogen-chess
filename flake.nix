@@ -184,23 +184,23 @@
               purescriptBundleDist = purescriptBundleDist;
             };
 
-          devShells.default =
-            pkgs.mkShell
-              { packages =
-                  with pkgs;
-                  [ entr
-                    nodejs
-                    (ps.command {})
-                    ps-tools.for-0_15.purescript-language-server
-                    purs-nix.esbuild
-                    purs-nix.purescript
-                  ];
+          # devShells.default =
+          #   pkgs.mkShell
+          #     { packages =
+          #         with pkgs;
+          #         [ entr
+          #           nodejs
+          #           (ps.command {})
+          #           ps-tools.for-0_15.purescript-language-server
+          #           purs-nix.esbuild
+          #           purs-nix.purescript
+          #         ];
 
-                shellHook =
-                  ''
-                  alias watch="find src | entr -s 'echo bundling; purs-nix bundle'"
-                  '';
-              };
+          #       shellHook =
+          #         ''
+          #         alias watch="find src | entr -s 'echo bundling; purs-nix bundle'"
+          #         '';
+          #     };
 
         });
 
