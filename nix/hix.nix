@@ -9,10 +9,4 @@
     p.musl64
   ]);
 
-  # shell.tools.hlint = "latest";
-  shell.tools =
-    { cabal = "latest";
-      hlint = "latest";
-       # haskell-language-server = "latest";
-    };
 }

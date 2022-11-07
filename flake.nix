@@ -47,8 +47,8 @@
             };
           };
 
-
-          pkgs = import nixpkgs { inherit system overlays; inherit (haskellNix) config; };
+          pkgs = import nixpkgs
+            { inherit system overlays; inherit (haskellNix) config; };
           flake = pkgs.hixProject.flake {};
 
           ps-tools = inputs.ps-tools.legacyPackages.${system};
@@ -184,23 +184,31 @@
               purescriptBundleDist = purescriptBundleDist;
             };
 
-          # devShells.default =
-          #   pkgs.mkShell
-          #     { packages =
-          #         with pkgs;
-          #         [ entr
-          #           nodejs
-          #           (ps.command {})
-          #           ps-tools.for-0_15.purescript-language-server
-          #           purs-nix.esbuild
-          #           purs-nix.purescript
-          #         ];
+          devShells.default = pkgs.hixProject.shellFor {
+            tools =
+              { cabal = "latest";
+                hlint = "latest";
+                # haskell-language-server = "latest";
+              };
+
+            buildInputs =
+              with pkgs;
+              [ entr
+                nodejs
+                (ps.command {})
+                ps-tools.for-0_15.purescript-language-server
+                purs-nix.esbuild
+                purs-nix.purescript
+              ];
+
+          };
 
           #       shellHook =
           #         ''
           #         alias watch="find src | entr -s 'echo bundling; purs-nix bundle'"
           #         '';
           #     };
+
 
         });
 
