@@ -48,3 +48,5 @@ cabal.project.local~
 
 *.js
 *~
+
+.direnv
