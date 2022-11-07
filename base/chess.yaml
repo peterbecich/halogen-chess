@@ -42,7 +42,7 @@ spec:
           - containerPort: 8080
         env:
         - name: CLIENT_DIR
-          value: /app/static/
+          value: /app/static
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

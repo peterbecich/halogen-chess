@@ -35,12 +35,11 @@
               [ flake.packages."halogen-chess:exe:halogen-chess"
                 staticFiles
                 purescriptBundleDist
-                pkgs.bash
               ];
             config = {
               Cmd = [ "halogen-chess" ];
               Env = [
-                "CLIENT_DIR=/data"
+                "CLIENT_DIR=/app/static"
               ];
               ExposedPorts = {
                 "8080/tcp" = {};
@@ -139,25 +138,38 @@
                 dir = ./.;
               };
 
-          purescriptBundle = ps.modules.Main.bundle { };
-
           staticFiles = pkgs.stdenv.mkDerivation {
             name = "bundle-static-files";
             src = ./static;
             installPhase = ''
-              mkdir -p $out/data/
+              mkdir -p $out/app/static/
               ls
-              cp -r * $out/data/
+              cp -r * $out/app/static/
             '';
           };
 
+          purescriptBundle = ps.modules.Main.bundle
+            { incremental = true;
+
+            };
+
           purescriptBundleDist = pkgs.runCommand "purs-nix-make-bundle"
-            { buildInputs = [ (ps.command { srcs = [ ./app ./src ]; }) ]; }
+            { buildInputs =
+                [
+                  (ps.command
+                    { srcs = [ ./app ./src ];
+                      bundle =
+                        { main = true;
+                          module = "Main";
+                          esbuild = { format = "iife"; };
+                        };
+                    }) ];
+            }
             ''
-            mkdir -p $out/data
+            mkdir -p $out/app/static/
             purs-nix compile
             purs-nix bundle
-            cp main.js $out/data/index.js
+            cp main.js $out/app/static/main.js
             '';
 
         in flake // {
