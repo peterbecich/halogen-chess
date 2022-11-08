@@ -2,6 +2,7 @@
   # This is a template created by `hix init`
   inputs = {
     haskellNix.url = "github:input-output-hk/haskell.nix";
+    # hackageNix.url = "github:input-output-hk/hackage.nix";
     nixpkgs.follows = "haskellNix/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     purs-nix.url = "github:purs-nix/purs-nix/ps-0.15";
