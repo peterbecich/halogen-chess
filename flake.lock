@@ -316,14 +316,14 @@
         "type": "github"
       }
     },
-    "hackage": {
+    "hackageNix": {
       "flake": false,
       "locked": {
-        "lastModified": 1659662042,
-        "narHash": "sha256-huZfOKR4pkrazTgZ7cBlH7ABtGzQjearrI+qin0Vz9c=",
+        "lastModified": 1667870118,
+        "narHash": "sha256-pSlKjb9j7HAPWUj0Y3leQHlTa1j6sBgFRTZBiOjkseI=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "368620d819ccc42922ab4bfeab5a03ba7669a61e",
+        "rev": "925d6f17c51e25d4453568e842e30223f1958875",
         "type": "github"
       },
       "original": {
@@ -341,13 +341,14 @@
         "cardano-shell": "cardano-shell",
         "flake-utils": "flake-utils_2",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk",
-        "hackage": "hackage",
+        "hackage": [
+          "hackageNix"
+        ],
         "hpc-coveralls": "hpc-coveralls",
         "hydra": "hydra",
         "nix-tools": "nix-tools",
         "nixpkgs": [
-          "haskellNix",
-          "nixpkgs-unstable"
+          "nixpkgs"
         ],
         "nixpkgs-2003": "nixpkgs-2003",
         "nixpkgs-2105": "nixpkgs-2105",
@@ -860,6 +861,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "hackageNix": "hackageNix",
         "haskellNix": "haskellNix",
         "nixpkgs": [
           "haskellNix",

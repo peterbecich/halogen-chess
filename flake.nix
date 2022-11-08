@@ -1,15 +1,22 @@
 {
   # This is a template created by `hix init`
   inputs = {
-    haskellNix.url = "github:input-output-hk/haskell.nix";
-    # hackageNix.url = "github:input-output-hk/hackage.nix";
+    hackageNix = {
+      url = "github:input-output-hk/hackage.nix";
+      flake = false;
+    };
     nixpkgs.follows = "haskellNix/nixpkgs-unstable";
+    haskellNix = {
+      url = "github:input-output-hk/haskell.nix";
+      inputs.hackage.follows = "hackageNix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-utils.url = "github:numtide/flake-utils";
     purs-nix.url = "github:purs-nix/purs-nix/ps-0.15";
     ps-tools.follows = "purs-nix/ps-tools";
   };
 
-  outputs = { self, nixpkgs, flake-utils, haskellNix, purs-nix, ps-tools }@inputs:
+  outputs = { self, nixpkgs, flake-utils, haskellNix, hackageNix, purs-nix, ps-tools }@inputs:
     let
       supportedSystems = [
         "x86_64-linux"
