@@ -196,7 +196,7 @@
             tools =
               { cabal = "latest";
                 hlint = "latest";
-                # haskell-language-server = "latest";
+                haskell-language-server = "latest";
               };
 
             buildInputs =
