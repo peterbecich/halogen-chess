@@ -1,6 +1,6 @@
 # Halogen Chess
 
-[![Haskell](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml) [![Purescript](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml) [![Build status](https://github.com/peterbecich/halogen-chess/actions/workflows/nix-cabal.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/nix-cabal.yml)
+[![Haskell](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml) [![Purescript](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml) [![Build status](https://github.com/peterbecich/halogen-chess/actions/workflows/nix-cabal.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/nix.yml)
 
 This project uses:
 
