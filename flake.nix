@@ -146,6 +146,12 @@
                 dir = ./.;
               };
 
+          haskell-language-server =
+            pkgs.buildPackages.haskell-nix.tool "ghc924" "haskell-language-server" {};
+          haskell-language-server-wrapper =
+            pkgs.writeShellScriptBin "haskell-language-server-wrapper"
+              ''${haskell-language-server}/bin/haskell-language-server "$@"'';
+
           staticFiles = pkgs.stdenv.mkDerivation {
             name = "bundle-static-files";
             src = ./static;
@@ -207,21 +213,10 @@
                 ps-tools.for-0_15.purescript-language-server
                 purs-nix.esbuild
                 purs-nix.purescript
+                haskell-language-server-wrapper
               ];
-
           };
-
-          #       shellHook =
-          #         ''
-          #         alias watch="find src | entr -s 'echo bundling; purs-nix bundle'"
-          #         '';
-          #     };
-
-
         });
-
-
-
 
   # --- Flake Local Nix Configuration ----------------------------
   nixConfig = {
