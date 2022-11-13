@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  # https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/
+  1-system-message.yaml: |
+    jenkins:
+      systemMessage: "Configuration as Code integration works!!!"

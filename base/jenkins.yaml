@@ -5,7 +5,8 @@ metadata:
   namespace: default
 spec:
   configurationAsCode:
-    configurations: []
+    configurations:
+    - name: jenkins-operator-user-configuration
     secret:
       name: ""
   groovyScripts:
