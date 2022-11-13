@@ -116,7 +116,7 @@ spec:
       exec:
         command:
           - /home/user/bin/backup.sh # this command is invoked on "backup" container to make backup, for example /home/user/bin/backup.sh <backup_number>, <backup_number> is passed by operator
-    interval: 30 # how often make backup in seconds
+    interval: 3600 # how often make backup in seconds
     makeBackupBeforePodDeletion: true # make a backup before pod deletion
   restore:
     containerName: backup # container name is responsible for restore backup
