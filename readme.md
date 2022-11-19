@@ -26,3 +26,8 @@ routes:
   * [http://localhost:8080/chess](http://localhost:8080/chess)
   * [http://localhost:8080/pageB](http://localhost:8080/pageB)
   * [http://localhost:8080/pageC](http://localhost:8080/pageC)
+
+
+```
+ghcid --command="cabal repl"
+```
