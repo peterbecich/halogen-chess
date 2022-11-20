@@ -35,26 +35,6 @@
                        })
                      ];
 
-          dockerImage = pkgs.dockerTools.buildImage {
-            name = "peterbecich/halogen-chess";
-            tag = "latest";
-            created = "now";
-            contents =
-              [ flake.packages."halogen-chess:exe:halogen-chess"
-                staticFiles
-                purescriptBundleDist
-              ];
-            config = {
-              Cmd = [ "halogen-chess" ];
-              Env = [
-                "CLIENT_DIR=/app/static"
-              ];
-              ExposedPorts = {
-                "8080/tcp" = {};
-              };
-            };
-          };
-
           pkgs = import nixpkgs
             { inherit system overlays; inherit (haskellNix) config; };
           flake = pkgs.hixProject.flake {};
@@ -146,12 +126,6 @@
                 dir = ./.;
               };
 
-          haskell-language-server =
-            pkgs.buildPackages.haskell-nix.tool "ghc925" "haskell-language-server" {};
-          haskell-language-server-wrapper =
-            pkgs.writeShellScriptBin "haskell-language-server-wrapper"
-              ''${haskell-language-server}/bin/haskell-language-server "$@"'';
-
           staticFiles = pkgs.stdenv.mkDerivation {
             name = "bundle-static-files";
             src = ./static;
@@ -186,6 +160,32 @@
             cp main.js $out/app/static/main.js
             '';
 
+          dockerImage = pkgs.dockerTools.buildImage {
+            name = "peterbecich/halogen-chess";
+            tag = "latest";
+            created = "now";
+            contents =
+              [ flake.packages."halogen-chess:exe:halogen-chess"
+                staticFiles
+                purescriptBundleDist
+              ];
+            config = {
+              Cmd = [ "halogen-chess" ];
+              Env = [
+                "CLIENT_DIR=/app/static"
+              ];
+              ExposedPorts = {
+                "8080/tcp" = {};
+              };
+            };
+          };
+
+          haskell-language-server =
+            pkgs.buildPackages.haskell-nix.tool "ghc925" "haskell-language-server" {};
+          haskell-language-server-wrapper =
+            pkgs.writeShellScriptBin "haskell-language-server-wrapper"
+              ''${haskell-language-server}/bin/haskell-language-server "$@"'';
+
         in flake // {
 
           packages =
@@ -204,6 +204,7 @@
                 hlint = "latest";
                 haskell-language-server = "latest";
                 ghcid = "latest";
+                ormolu = "latest";
               };
 
             buildInputs =
