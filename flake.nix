@@ -204,7 +204,9 @@
                 hlint = "latest";
                 haskell-language-server = "latest";
                 ghcid = "latest";
-                ormolu = "latest";
+                # ormolu = "latest";
+                hindent = "latest";
+                stylish-haskell = "latest";
               };
 
             buildInputs =
