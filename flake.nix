@@ -186,6 +186,10 @@
             pkgs.writeShellScriptBin "haskell-language-server-wrapper"
               ''${haskell-language-server}/bin/haskell-language-server "$@"'';
 
+          stylish-haskell =
+            pkgs.buildPackages.haskell-nix.tool "ghc902" "stylish-haskell" {};
+
+
         in flake // {
 
           packages =
@@ -206,7 +210,7 @@
                 ghcid = "latest";
                 # ormolu = "latest";
                 hindent = "latest";
-                stylish-haskell = "latest";
+                # stylish-haskell = "latest";
               };
 
             buildInputs =
@@ -218,6 +222,7 @@
                 purs-nix.esbuild
                 purs-nix.purescript
                 haskell-language-server-wrapper
+                stylish-haskell
               ];
           };
         });
