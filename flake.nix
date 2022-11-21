@@ -183,7 +183,7 @@
           };
 
           haskell-language-server =
-            pkgs.buildPackages.haskell-nix.tool "ghc925" "haskell-language-server" {};
+            pkgs.buildPackages.haskell-nix.tool "ghc924" "haskell-language-server" {};
           haskell-language-server-wrapper =
             pkgs.writeShellScriptBin "haskell-language-server-wrapper"
               ''${haskell-language-server}/bin/haskell-language-server "$@"'';

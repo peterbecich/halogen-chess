@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   name = "halogen-chess";
-  compiler-nix-name = "ghc925"; # Version of GHC to use
+  compiler-nix-name = "ghc924"; # Version of GHC to use
 
   crossPlatforms = p: pkgs.lib.optionals pkgs.stdenv.hostPlatform.isx86_64 ([
     # p.mingwW64
