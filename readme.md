@@ -3,8 +3,6 @@
 [![Haskell](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/haskell.yml)
 [![Purescript](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/purescript.yml)
 [![Build status](https://github.com/peterbecich/halogen-chess/actions/workflows/nix.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/nix.yml) 
-[![Ormolu](https://github.com/peterbecich/halogen-chess/actions/workflows/ormolu.yml/badge.svg)](https://github.com/peterbecich/halogen-chess/actions/workflows/ormolu.yml)
-
 This project uses:
 
 * [Purescript Bridge](https://github.com/eskimor/purescript-bridge)
@@ -33,4 +31,9 @@ routes:
 
 ```
 ghcid --command="cabal repl"
+```
+
+
+```
+stylish-haskell --inplace $(find -name '*.hs' -not -path './dist-newstyle/*')
 ```

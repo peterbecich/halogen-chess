@@ -9,23 +9,15 @@ module Game.Chess.Board where
 import Prelude
 
 import qualified Control.Exception as Exc
-import           Control.Monad (forM)
-import           Control.Monad.IO.Class (MonadIO, liftIO)
-import           Data.Aeson
-import           Data.Bits (Bits (unsafeShiftL, (.|.)))
-import           GHC.Generics
+import Control.Monad (forM)
+import Control.Monad.IO.Class (MonadIO, liftIO)
+import Data.Aeson
+import Data.Bits (Bits (unsafeShiftL, (.|.)))
+import GHC.Generics
 
 import Game.Chess
-    ( IsSquare (toIndex)
-    , Ply (..)
-    , Position
-    , Sq (..)
-    , doPly
-    , fromFEN
-    , legalPlies
-    , toFEN
-    , unsafeDoPly
-    )
+    (IsSquare (toIndex), Ply (..), Position, Sq (..), doPly, fromFEN,
+    legalPlies, toFEN, unsafeDoPly)
 import Game.Chess.Move (Move (Move))
 import Game.Chess.Orphans ()
 
