@@ -35,8 +35,10 @@
                        })
                      ];
 
-          pkgs = import nixpkgs
-            { inherit system overlays; inherit (haskellNix) config; };
+          pkgs = import nixpkgs {
+            inherit system overlays;
+            inherit (haskellNix) config;
+          };
           flake = pkgs.hixProject.flake {};
 
           ps-tools = inputs.ps-tools.legacyPackages.${system};
