@@ -33,8 +33,6 @@ spec:
       # version: "2.7"
     - name: workflow-durable-task-step
       version: "1206.v8a_d5f86e336b"
-    - name: workflow-cps
-      version: "2803.v1a_f77ffcc773"
     - name: metrics
       version: 4.2.10-389.v93143621b_050
     - name: git
@@ -45,10 +43,14 @@ spec:
       version: "1559.v38a_b_2e3b_6b_b_7"
     - name: kubernetes-credentials-provider
       version: "1.206.v7ce2cf7b_0c8b"
+    - name: workflow-cps
+      version: "3536.vb_8a_6628079d5"
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
         image: jenkins/jenkins:2.356-alpine
+        # image: jenkins/jenkins:2.357-alpine
+        # image: jenkins/jenkins:2.361.4-lts-alpine
 
         imagePullPolicy: Always
         livenessProbe:
