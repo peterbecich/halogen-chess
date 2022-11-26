@@ -5,9 +5,9 @@ configMapGenerator:
 
 
 resources:
-  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/keycloaks.k8s.keycloak.org-v1.yml
-  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/keycloakrealmimports.k8s.keycloak.org-v1.yml
-  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/19.0.3/kubernetes/kubernetes.yml
+  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/20.0.1/kubernetes/keycloaks.k8s.keycloak.org-v1.yml
+  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/20.0.1/kubernetes/keycloakrealmimports.k8s.keycloak.org-v1.yml
+  - https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/20.0.1/kubernetes/kubernetes.yml
 
   - https://raw.githubusercontent.com/reactive-tech/kubegres/v1.16/kubegres.yaml
   - base/keycloak.yaml

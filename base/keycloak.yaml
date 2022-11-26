@@ -5,20 +5,21 @@ metadata:
   namespace: default
 spec:
   instances: 1
-  serverConfiguration:
-    - name: db
-      value: postgres
-    - name: db-url-database
-      value: postgres
-    - name: db-url-host
-      value: keycloak-postgresql-db
-    - name: db-username
-      value: postgres
-    - name: db-password
-      secret:
-        name: keycloak-postgres-secret
-        key: superUserPassword
+  db:
+    vendor: postgres
+    host: keycloak-postgresql-db
+    usernameSecret:
+      name: keycloak-postgres-secret
+      key: superUserName
+    passwordSecret:
+      name: keycloak-postgres-secret
+      key: superUserPassword
 
-  hostname: localhost:8443
-  tlsSecret: example-tls-secret
-  disableDefaultIngress: true
+  http:
+    tlsSecret: example-tls-secret
+
+  hostname:
+    hostname: localhost:8443
+
+  transaction:
+    xaEnabled: true
