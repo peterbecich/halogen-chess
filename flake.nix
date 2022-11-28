@@ -213,6 +213,7 @@
                 # ormolu = "latest";
                 hindent = "latest";
                 # stylish-haskell = "latest";
+                # steeloverseer = "latest";
               };
 
             buildInputs =
