@@ -202,6 +202,15 @@
               purescriptBundle = purescriptBundle;
 
               purescriptBundleDist = purescriptBundleDist;
+
+              # https://www.ertt.ca/nix/shell-scripts/
+              # need to provide `sos` via nixpkgs
+              localDevelopment =
+                pkgs.writeShellScriptBin "my-script" ''
+                  echo "start server"
+                  sos . -p ".*\.hs" -e ".*\#.*\.hs" -c "echo 'hello'"
+                '';
+
             };
 
           devShells.default = pkgs.hixProject.shellFor {
@@ -213,7 +222,7 @@
                 # ormolu = "latest";
                 hindent = "latest";
                 # stylish-haskell = "latest";
-                # steeloverseer = "latest";
+                # steeloverseer = "2.1.0.1";
               };
 
             buildInputs =
