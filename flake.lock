@@ -488,11 +488,11 @@
     "hackageNix": {
       "flake": false,
       "locked": {
-        "lastModified": 1668993229,
-        "narHash": "sha256-SLKsbc4bNMYX5OZmkE9DEsyRhjUOZ2e0HLMfGYMXwZQ=",
+        "lastModified": 1669857312,
+        "narHash": "sha256-m0jYF2gOKTaCcedV+dZkCjVbfv0CWkRziCeEk/NF/34=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "4a3bbfdae60ebc074e5560f84281cc9a83170341",
+        "rev": "8299f5acc68f0e91563e7688f24cbc70391600bf",
         "type": "github"
       },
       "original": {
@@ -529,15 +529,16 @@
         "tullia": "tullia"
       },
       "locked": {
-        "lastModified": 1668993548,
-        "narHash": "sha256-dtzHGmqvoNy6P8pb4FlZ1AIlnOT4+zjPjkmZFwAVueo=",
-        "owner": "input-output-hk",
+        "lastModified": 1670132514,
+        "narHash": "sha256-sxPnq4UDtn9D6w9hPSGRbcREeBs6scmdwC+gMo0rGTQ=",
+        "owner": "peterbecich",
         "repo": "haskell.nix",
-        "rev": "8bdd53cffecbbaeaebf4507e1ce63f4388976055",
+        "rev": "1957a1655e5cc56f5b4bd28ca56e1949f7a8da76",
         "type": "github"
       },
       "original": {
-        "owner": "input-output-hk",
+        "owner": "peterbecich",
+        "ref": "shell-tool-mappings",
         "repo": "haskell.nix",
         "type": "github"
       }
@@ -1258,11 +1259,11 @@
     "stackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1668993488,
-        "narHash": "sha256-jiw29Gr3KIGUcQxAReB0T9JCyLAl0Xau0QKl4KKl+E0=",
+        "lastModified": 1669857425,
+        "narHash": "sha256-pmGWQ8poIUqU0V02Zm8aMPimcW2JHqKCFOnLSYX22Ow=",
         "owner": "input-output-hk",
         "repo": "stackage.nix",
-        "rev": "25ede1a4becc4892e9dfa3117d6971f8b7d94e0c",
+        "rev": "76e7487150da63a6061c63fa83e69da97ec56ede",
         "type": "github"
       },
       "original": {
@@ -1340,11 +1341,11 @@
         "std": "std"
       },
       "locked": {
-        "lastModified": 1666200256,
-        "narHash": "sha256-cJPS8zBu30SMhxMe7I8DWutwqMuhPsEez87y9gxMKc4=",
+        "lastModified": 1668711738,
+        "narHash": "sha256-CBjky16o9pqsGE1bWu6nRlRajgSXMEk+yaFQLibqXcE=",
         "owner": "input-output-hk",
         "repo": "tullia",
-        "rev": "575362c2244498e8d2c97f72861510fa72e75d44",
+        "rev": "ead1f515c251f0e060060ef0e2356a51d3dfe4b0",
         "type": "github"
       },
       "original": {

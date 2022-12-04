@@ -7,7 +7,7 @@
     };
     nixpkgs.follows = "haskellNix/nixpkgs-unstable";
     haskellNix = {
-      url = "github:input-output-hk/haskell.nix";
+      url = "github:peterbecich/haskell.nix/shell-tool-mappings";
       inputs.hackage.follows = "hackageNix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -219,10 +219,8 @@
                 hlint = "latest";
                 haskell-language-server = "latest";
                 ghcid = "latest";
-                # ormolu = "latest";
                 hindent = "latest";
-                # stylish-haskell = "latest";
-                # steeloverseer = "2.1.0.1";
+                steeloverseer = "2.1.0.1";
               };
 
             buildInputs =
