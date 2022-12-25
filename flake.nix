@@ -12,7 +12,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
-    purs-nix.url = "github:purs-nix/purs-nix/ps-0.15";
+    purs-nix.url = "github:peterbecich/purs-nix/update-packages";
     ps-tools.follows = "purs-nix/ps-tools";
   };
 

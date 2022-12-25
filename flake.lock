@@ -1175,16 +1175,16 @@
         "utils": "utils_5"
       },
       "locked": {
-        "lastModified": 1671257471,
-        "narHash": "sha256-RphwAKk/Jdh7UE6fGAoVD8QxVOCy2aZqvLLjFRxiJa8=",
-        "owner": "purs-nix",
+        "lastModified": 1671955402,
+        "narHash": "sha256-Ksisief6KeCiK2aAk3p704X7I0Yhs3szPFNcEp8uLA8=",
+        "owner": "peterbecich",
         "repo": "purs-nix",
-        "rev": "0fae0fd9316a20e2312cfdbcb8135b0e56330e01",
+        "rev": "c6b9bd975026d2f8e5c56b2245d5e217fa8fcaf8",
         "type": "github"
       },
       "original": {
-        "owner": "purs-nix",
-        "ref": "ps-0.15",
+        "owner": "peterbecich",
+        "ref": "update-packages",
         "repo": "purs-nix",
         "type": "github"
       }
