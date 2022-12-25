@@ -63,8 +63,8 @@
               };
 
             src.git = {
-              repo = "https://github.com/bentongxyz/purescript-argonaut-aeson-generic.git";
-              rev = "dcd925179b37a2ac749b7a1f1ae72bb69746d886";
+              repo = "https://github.com/coot/purescript-argonaut-aeson-generic.git";
+              rev = "4cee717e3e0003b76e699550f5fc35976901078c";
             };
           };
 
