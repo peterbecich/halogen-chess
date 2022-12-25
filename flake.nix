@@ -227,6 +227,7 @@
               with pkgs;
               [ entr
                 nodejs
+                spago
                 (ps.command {})
                 ps-tools.for-0_15.purescript-language-server
                 purs-nix.esbuild
