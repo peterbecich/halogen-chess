@@ -7,7 +7,7 @@
     };
     nixpkgs.follows = "haskellNix/nixpkgs-unstable";
     haskellNix = {
-      url = "github:peterbecich/haskell.nix/shell-tool-mappings";
+      url = "github:input-output-hk/haskell.nix";
       inputs.hackage.follows = "hackageNix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
