@@ -8,12 +8,13 @@ jobs:
     name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        cabal: ["3.6.2.0"]
+        cabal: ["3.8.1.0"]
         ghc:
-          - "9.2.4"
-          - "9.4.2"
+          - "9.2.5"
+          - "9.4.4"
 
     steps:
     - uses: actions/checkout@v2

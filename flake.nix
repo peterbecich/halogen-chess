@@ -17,226 +17,221 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, haskellNix, hackageNix, purs-nix, ps-tools }@inputs:
-    let
-      supportedSystems = [
-        "x86_64-linux"
-      ];
-    in
-      flake-utils.lib.eachSystem supportedSystems (system:
-        let
-          overlays = [ haskellNix.overlay
-                       (final: prev: {
-                         hixProject =
-                           final.haskell-nix.hix.project {
-                             projectFileName = "cabal.project";
-                             src = ./.;
-                             evalSystem = "x86_64-linux";
-                           };
-                       })
-                     ];
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        overlays = [ haskellNix.overlay
+                     (final: prev: {
+                       hixProject =
+                         final.haskell-nix.hix.project {
+                           projectFileName = "cabal.project";
+                           src = ./.;
+                           evalSystem = builtins.currentSystem or "x86_64-linux";
+                         };
+                     })
+                   ];
 
-          pkgs = import nixpkgs {
-            inherit system overlays;
-            inherit (haskellNix) config;
-          };
-          flake = pkgs.hixProject.flake {};
+        pkgs = import nixpkgs {
+          inherit system overlays;
+          inherit (haskellNix) config;
+        };
+        flake = pkgs.hixProject.flake {};
 
-          ps-tools = inputs.ps-tools.legacyPackages.${system};
-          purs-nix = inputs.purs-nix {
-            inherit system;
-          };
+        ps-tools = inputs.ps-tools.legacyPackages.${system};
+        purs-nix = inputs.purs-nix {
+          inherit system;
+        };
 
-          argonaut-aeson-generic = purs-nix.build {
-            name = "argonaut-aeson-generic";
-            info =
-              { # version = "1.0.0";
-                dependencies =
-                  with purs-nix.ps-pkgs;
-                  [ argonaut
-                    argonaut-codecs
-                    argonaut-generic
-                    console
-                    effect
-                    foreign-object
-                    test-unit
-                  ];
-              };
-
-            src.git = {
-              repo = "https://github.com/coot/purescript-argonaut-aeson-generic.git";
-              rev = "4cee717e3e0003b76e699550f5fc35976901078c";
+        argonaut-aeson-generic = purs-nix.build {
+          name = "argonaut-aeson-generic";
+          info =
+            { # version = "1.0.0";
+              dependencies =
+                with purs-nix.ps-pkgs;
+                [ argonaut
+                  argonaut-codecs
+                  argonaut-generic
+                  console
+                  effect
+                  foreign-object
+                  test-unit
+                ];
             };
+
+          src.git = {
+            repo = "https://github.com/coot/purescript-argonaut-aeson-generic.git";
+            rev = "4cee717e3e0003b76e699550f5fc35976901078c";
           };
+        };
 
-          foreign-generic = purs-nix.build {
-            name = "foreign-generic";
-            info =
-              { # version = "0.15";
-                dependencies =
-                  with purs-nix.ps-pkgs;
-                  [ effect
-                    foreign
-                    foreign-object
-                    ordered-collections
-                    exceptions
-                    record
-                    identity
-                  ];
-              };
-
-            src.git = {
-              # allRefs = true;
-              repo = "https://github.com/peterbecich/purescript-foreign-generic.git";
-              rev = "844f2ababa2c7a0482bf871e1e6bf970b7e51313";
-              sha256 = "1df3n2yq8gmndldl0i1b3xqal50q12za61vgafdd13h1zf9cp3j3";
+        foreign-generic = purs-nix.build {
+          name = "foreign-generic";
+          info =
+            { # version = "0.15";
+              dependencies =
+                with purs-nix.ps-pkgs;
+                [ effect
+                  foreign
+                  foreign-object
+                  ordered-collections
+                  exceptions
+                  record
+                  identity
+                ];
             };
+
+          src.git = {
+            # allRefs = true;
+            repo = "https://github.com/peterbecich/purescript-foreign-generic.git";
+            rev = "844f2ababa2c7a0482bf871e1e6bf970b7e51313";
+            sha256 = "1df3n2yq8gmndldl0i1b3xqal50q12za61vgafdd13h1zf9cp3j3";
           };
+        };
 
-          ps =
-            purs-nix.purs
-              { dependencies =
-                  with purs-nix.ps-pkgs;
-                  [ aff
-                    affjax
-                    affjax-web
-                    argonaut-aeson-generic
-                    argonaut-codecs
-                    argonaut-core
-                    arrays
-                    colors
-                    console
-                    css
-                    effect
-                    either
-                    foldable-traversable
-                    foreign
-                    foreign-generic
-                    halogen
-                    halogen-css
-                    halogen-store
-                    maybe
-                    newtype
-                    prelude
-                    profunctor-lenses
-                    routing
-                    routing-duplex
-                    tuples
-                    unordered-collections
-                  ];
+        ps =
+          purs-nix.purs
+            { dependencies =
+                with purs-nix.ps-pkgs;
+                [ aff
+                  affjax
+                  affjax-web
+                  argonaut-aeson-generic
+                  argonaut-codecs
+                  argonaut-core
+                  arrays
+                  colors
+                  console
+                  css
+                  effect
+                  either
+                  foldable-traversable
+                  foreign
+                  foreign-generic
+                  halogen
+                  halogen-css
+                  halogen-store
+                  maybe
+                  newtype
+                  prelude
+                  profunctor-lenses
+                  routing
+                  routing-duplex
+                  tuples
+                  unordered-collections
+                ];
 
-                srcs = [ "app" "src" ];
-                dir = ./.;
-              };
+              srcs = [ "app" "src" ];
+              dir = ./.;
+            };
 
-          staticFiles = pkgs.stdenv.mkDerivation {
-            name = "bundle-static-files";
-            src = ./static;
-            installPhase = ''
+        staticFiles = pkgs.stdenv.mkDerivation {
+          name = "bundle-static-files";
+          src = ./static;
+          installPhase = ''
               mkdir -p $out/app/static/
               ls
               cp -r * $out/app/static/
             '';
+        };
+
+        purescriptBundle = ps.modules.Main.bundle
+          { incremental = true;
+
           };
 
-          purescriptBundle = ps.modules.Main.bundle
-            { incremental = true;
-
-            };
-
-          purescriptBundleDist = pkgs.runCommand "purs-nix-make-bundle"
-            { buildInputs =
-                [
-                  (ps.command
-                    { srcs = [ ./app ./src ];
-                      bundle =
-                        { main = true;
-                          module = "Main";
-                          esbuild = { format = "iife"; };
-                        };
-                    }) ];
-            }
-            ''
+        purescriptBundleDist = pkgs.runCommand "purs-nix-make-bundle"
+          { buildInputs =
+              [
+                (ps.command
+                  { srcs = [ ./app ./src ];
+                    bundle =
+                      { main = true;
+                        module = "Main";
+                        esbuild = { format = "iife"; };
+                      };
+                  }) ];
+          }
+          ''
             mkdir -p $out/app/static/
             purs-nix compile
             purs-nix bundle
             cp main.js $out/app/static/main.js
             '';
 
-          dockerImage = pkgs.dockerTools.buildImage {
-            name = "peterbecich/halogen-chess";
-            tag = "latest";
-            created = "now";
-            contents =
-              [ flake.packages."halogen-chess:exe:halogen-chess"
-                staticFiles
-                purescriptBundleDist
-              ];
-            config = {
-              Cmd = [ "halogen-chess" ];
-              Env = [
-                "CLIENT_DIR=/app/static"
-              ];
-              ExposedPorts = {
-                "8080/tcp" = {};
-              };
+        dockerImage = pkgs.dockerTools.buildImage {
+          name = "peterbecich/halogen-chess";
+          tag = "latest";
+          created = "now";
+          contents =
+            [ flake.packages."halogen-chess:exe:halogen-chess"
+              staticFiles
+              purescriptBundleDist
+            ];
+          config = {
+            Cmd = [ "halogen-chess" ];
+            Env = [
+              "CLIENT_DIR=/app/static"
+            ];
+            ExposedPorts = {
+              "8080/tcp" = {};
             };
           };
+        };
 
-          haskell-language-server =
-            pkgs.buildPackages.haskell-nix.tool "ghc924" "haskell-language-server" {};
-          haskell-language-server-wrapper =
-            pkgs.writeShellScriptBin "haskell-language-server-wrapper"
-              ''${haskell-language-server}/bin/haskell-language-server "$@"'';
+        haskell-language-server =
+          pkgs.buildPackages.haskell-nix.tool "ghc924" "haskell-language-server" {};
+        haskell-language-server-wrapper =
+          pkgs.writeShellScriptBin "haskell-language-server-wrapper"
+            ''${haskell-language-server}/bin/haskell-language-server "$@"'';
 
-          stylish-haskell =
-            pkgs.buildPackages.haskell-nix.tool "ghc902" "stylish-haskell" {};
+        stylish-haskell =
+          pkgs.buildPackages.haskell-nix.tool "ghc902" "stylish-haskell" {};
 
 
-        in flake // {
+      in flake // {
 
-          packages =
-            { default = flake.packages."halogen-chess:exe:halogen-chess";
+        packages =
+          { default = flake.packages."halogen-chess:exe:halogen-chess";
 
-              dockerImage = dockerImage;
+            dockerImage = dockerImage;
 
-              purescriptBundle = purescriptBundle;
+            purescriptBundle = purescriptBundle;
 
-              purescriptBundleDist = purescriptBundleDist;
+            purescriptBundleDist = purescriptBundleDist;
 
-              # https://www.ertt.ca/nix/shell-scripts/
-              # need to provide `sos` via nixpkgs
-              localDevelopment =
-                pkgs.writeShellScriptBin "my-script" ''
+            # https://www.ertt.ca/nix/shell-scripts/
+            # need to provide `sos` via nixpkgs
+            localDevelopment =
+              pkgs.writeShellScriptBin "my-script" ''
                   echo "start server"
                   sos . -p ".*\.hs" -e ".*\#.*\.hs" -c "echo 'hello'"
                 '';
 
+          };
+
+        devShells.default = pkgs.hixProject.shellFor {
+          tools =
+            { cabal = "latest";
+              hlint = "latest";
+              haskell-language-server = "latest";
+              ghcid = "latest";
+              hindent = "latest";
+              steeloverseer = "2.1.0.1";
             };
 
-          devShells.default = pkgs.hixProject.shellFor {
-            tools =
-              { cabal = "latest";
-                hlint = "latest";
-                haskell-language-server = "latest";
-                ghcid = "latest";
-                hindent = "latest";
-                steeloverseer = "2.1.0.1";
-              };
-
-            buildInputs =
-              with pkgs;
-              [ entr
-                nodejs
-                spago
-                (ps.command {})
-                ps-tools.for-0_15.purescript-language-server
-                purs-nix.esbuild
-                purs-nix.purescript
-                haskell-language-server-wrapper
-                stylish-haskell
-              ];
-          };
-        });
+          buildInputs =
+            with pkgs;
+            [ entr
+              nodejs
+              spago
+              (ps.command {})
+              ps-tools.for-0_15.purescript-language-server
+              purs-nix.esbuild
+              purs-nix.purescript
+              haskell-language-server-wrapper
+              stylish-haskell
+            ];
+        };
+      });
 
   # --- Flake Local Nix Configuration ----------------------------
   nixConfig = {
