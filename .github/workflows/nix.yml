@@ -1,9 +1,5 @@
 name: "Nix Flake Build"
-on:
-  push:
-    branches: '**'
-  pull_request:
-    paths-ignore: []
+on: [push, pull_request]
 
 jobs:
   tests:

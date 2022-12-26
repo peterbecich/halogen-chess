@@ -1,13 +1,7 @@
 # adapted from https://github.com/purescript-contrib/purescript-argonaut-generic/blob/d211820cfec5c7cf2caa20dc6dc293671949b55c/.github/workflows/ci.yml
 name: Purescript
 
-on:
-  push:
-    branches:
-    - '**'
-    paths-ignore: []
-  pull_request:
-    paths-ignore: []
+on: [push, pull_request]
 
 jobs:
   build:
