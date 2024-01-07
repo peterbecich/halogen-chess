@@ -1,54 +1,68 @@
 {
-  # This is a template created by `hix init`
   inputs = {
-    hackageNix = {
-      url = "github:input-output-hk/hackage.nix";
-      flake = false;
-    };
-    nixpkgs.follows = "haskellNix/nixpkgs-unstable";
-    haskellNix = {
-      url = "github:input-output-hk/haskell.nix";
-      inputs.hackage.follows = "hackageNix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    flake-utils.url = "github:numtide/flake-utils";
-    purs-nix.url = "github:peterbecich/purs-nix/update-packages";
+    nixpkgs.url = "github:nixos/nixpkgs/haskell-updates";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    haskell-flake.url = "github:srid/haskell-flake";
+    check-flake.url = "github:srid/check-flake";
+    flake-root.url = "github:srid/flake-root";
+    purescript-overlay.url = "github:thomashoneyman/purescript-overlay";
+    purescript-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+    # flake-utils.url = "github:numtide/flake-utils";
+    purs-nix.url = "github:purs-nix/purs-nix";
     ps-tools.follows = "purs-nix/ps-tools";
+
+    purescript-bridge.url =
+      "github:eskimor/purescript-bridge/793cd8206ae777dd8f77245c1c8dbeb597c7828f";
+    purescript-bridge.flake = false;
+
+
+    argonaut-aeson-generic-repo.url = "github:coot/purescript-argonaut-aeson-generic/4cee717e3e0003b76e699550f5fc35976901078c";
+    argonaut-aeson-generic-repo.flake = false;
+
+    foreign-generic-repo.url = "github:peterbecich/purescript-foreign-generic/844f2ababa2c7a0482bf871e1e6bf970b7e51313";
+    foreign-generic-repo.flake = false;
   };
 
-  outputs = { self, nixpkgs, flake-utils, haskellNix, hackageNix, purs-nix, ps-tools }@inputs:
-    let
-      supportedSystems = [
-        "x86_64-linux"
-        "x86_64-darwin"
-        "aarch64-linux"
-        "aarch64-darwin"
-
+  outputs = inputs@{ self
+                   , nixpkgs
+                   , flake-parts
+                   , haskell-flake
+                   , check-flake
+                   , flake-root
+                   , purescript-overlay
+                   , purs-nix
+                   , ps-tools
+                   , purescript-bridge
+                   , argonaut-aeson-generic-repo
+                   , foreign-generic-repo
+                   }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = nixpkgs.lib.systems.flakeExposed;
+      imports = [
+        haskell-flake.flakeModule
+        flake-root.flakeModule
+        check-flake.flakeModule
       ];
-    in
-      flake-utils.lib.eachSystem supportedSystems (system:
+
+      # ps =
+      #   purs-nix.purs
+      #     { dependencies =
+      #         [ "console"
+      #           "effect"
+      #           "prelude"
+      #         ];
+
+      #       dir = ./.;
+
+      #       # foreign.Main.node_modules =
+      #       #   npmlock2nix.node_modules { src = ./.; } + /node_modules;
+      #     };
+
+      perSystem = { self', pkgs, system, config,... }:
         let
-          overlays = [ haskellNix.overlay
-                       (final: prev: {
-                         hixProject =
-                           final.haskell-nix.hix.project {
-                             projectFileName = "cabal.project";
-                             src = ./.;
-                             evalSystem = "x86_64-linux";
-                           };
-                       })
-                     ];
-
-          pkgs = import nixpkgs {
-            inherit system overlays;
-            inherit (haskellNix) config;
-          };
-          flake = pkgs.hixProject.flake {};
-
+          purs-nix = inputs.purs-nix { inherit system; };
           ps-tools = inputs.ps-tools.legacyPackages.${system};
-          purs-nix = inputs.purs-nix {
-            inherit system;
-          };
 
           argonaut-aeson-generic = purs-nix.build {
             name = "argonaut-aeson-generic";
@@ -96,41 +110,38 @@
             };
           };
 
-          ps =
-            purs-nix.purs
-              { dependencies =
-                  with purs-nix.ps-pkgs;
-                  [ aff
-                    affjax
-                    affjax-web
-                    argonaut-aeson-generic
-                    argonaut-codecs
-                    argonaut-core
-                    arrays
-                    colors
-                    console
-                    css
-                    effect
-                    either
-                    foldable-traversable
-                    foreign
-                    foreign-generic
-                    halogen
-                    halogen-css
-                    halogen-store
-                    maybe
-                    newtype
-                    prelude
-                    profunctor-lenses
-                    routing
-                    routing-duplex
-                    tuples
-                    unordered-collections
-                  ];
-
-                srcs = [ "app" "src" ];
-                dir = ./.;
-              };
+          ps = purs-nix.purs {
+            dependencies = with purs-nix.ps-pkgs; [
+              aff
+              affjax
+              affjax-web
+              argonaut-aeson-generic
+              argonaut-codecs
+              argonaut-core
+              arrays
+              colors
+              console
+              css
+              effect
+              either
+              foldable-traversable
+              foreign
+              foreign-generic
+              halogen
+              halogen-css
+              halogen-store
+              maybe
+              newtype
+              prelude
+              profunctor-lenses
+              routing
+              routing-duplex
+              tuples
+              unordered-collections
+            ];
+            srcs = [ "app" "src" ];
+            dir = ./.;
+          };
 
           staticFiles = pkgs.stdenv.mkDerivation {
             name = "bundle-static-files";
@@ -141,40 +152,94 @@
               cp -r * $out/app/static/
             '';
           };
+        in {
 
-          purescriptBundle = ps.modules.Main.bundle
-            { incremental = true;
+          # https://flake.parts/overlays#consuming-an-overlay
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              purescript-overlay.overlays.default
+            ];
+          };
 
+
+          haskellProjects.default = {
+            basePackages = pkgs.haskellPackages;
+            settings = {
+              # purescript-bridge.check = false;
+              brick.jailbreak = true;
+              hls-stan-plugin.check = false;
+              # https://community.flake.parts/haskell-flake/dependency#nixpkgs
+              # floskell = { super, ... }:
+              #   { custom = _: super.floskell_0_11_0; };
+            };
+            packages = {
+              chessIO.source = "0.6.1.1";
+              # brick.source = "2.3.1";
+              brick.source = "0.73";
+              vty-unix.source = "0.2.0.0";
+              vty.source = "5.39";
+              purescript-bridge.source = inputs.purescript-bridge;
+            };
+            devShell = {
+              enable = true;
+              tools = haskellPackages: {
+                inherit (haskellPackages) zlib stylish-haskell;
+              };
+              hlsCheck.enable = false;
             };
 
-          purescriptBundleDist = pkgs.runCommand "purs-nix-make-bundle"
-            { buildInputs =
-                [
-                  (ps.command
-                    { srcs = [ ./app ./src ];
-                      bundle =
-                        { main = true;
-                          module = "Main";
-                          esbuild = { format = "iife"; };
-                        };
-                    }) ];
-            }
-            ''
-            mkdir -p $out/app/static/
-            purs-nix compile
-            purs-nix bundle
-            cp main.js $out/app/static/main.js
-            '';
+            # exclude devShell, fixes duplicate definition
+            autoWire = [ "packages" "apps" "checks" ];
+          };
 
-          dockerImage = pkgs.dockerTools.buildImage {
+          devShells.default = pkgs.mkShell {
+            inputsFrom = [
+              config.haskellProjects.default.outputs.devShell
+            ];
+            buildInputs = with pkgs; [
+              purs
+              spago
+              purs-tidy-bin.purs-tidy-0_10_0
+              purs-backend-es
+              purescript-language-server
+              purs-nix.esbuild
+              purs-nix.purescript
+              (ps.command {})
+            ];
+          };
+
+          packages.bar = ps.output {
+          };
+
+          packages.foo = ps.bundle {
+            # incremental = true;
+            esbuild = {
+              outfile = "main.js";
+              format = "iife";
+            };
+            main = true;
+          };
+          # packages.purescriptOutput = ps.output {};
+          # packages.purescriptBundle = ps.bundle {
+            # module = "Main";
+          # };
+
+          packages.dockerImage = pkgs.dockerTools.buildImage {
             name = "peterbecich/halogen-chess";
             tag = "latest";
             created = "now";
-            contents =
-              [ flake.packages."halogen-chess:exe:halogen-chess"
-                staticFiles
-                purescriptBundleDist
+            copyToRoot = pkgs.buildEnv {
+              name = "image-root";
+              paths = [
+                self'.packages.halogen-chess
+                # TODO
+                # staticFiles
+                # self'.packages.foo
+                # (ps.bundle {})
               ];
+              # paths
+            };
             config = {
               Cmd = [ "halogen-chess" ];
               Env = [
@@ -186,69 +251,15 @@
             };
           };
 
-          haskell-language-server =
-            pkgs.buildPackages.haskell-nix.tool "ghc924" "haskell-language-server" {};
-          haskell-language-server-wrapper =
-            pkgs.writeShellScriptBin "haskell-language-server-wrapper"
-              ''${haskell-language-server}/bin/haskell-language-server "$@"'';
+          # https://www.ertt.ca/nix/shell-scripts/
+          # need to provide `sos` via nixpkgs
+          # localDevelopment =
+          #   pkgs.writeShellScriptBin "my-script" ''
+          #     echo "start server"
+          #     sos . -p ".*\.hs" -e ".*\#.*\.hs" -c "echo 'hello'"
+          #   '';
 
-          stylish-haskell =
-            pkgs.buildPackages.haskell-nix.tool "ghc902" "stylish-haskell" {};
-
-
-        in flake // {
-
-          packages =
-            { default = flake.packages."halogen-chess:exe:halogen-chess";
-
-              dockerImage = dockerImage;
-
-              purescriptBundle = purescriptBundle;
-
-              purescriptBundleDist = purescriptBundleDist;
-
-              # https://www.ertt.ca/nix/shell-scripts/
-              # need to provide `sos` via nixpkgs
-              localDevelopment =
-                pkgs.writeShellScriptBin "my-script" ''
-                  echo "start server"
-                  sos . -p ".*\.hs" -e ".*\#.*\.hs" -c "echo 'hello'"
-                '';
-
-            };
-
-          devShells.default = pkgs.hixProject.shellFor {
-            tools =
-              { cabal = "latest";
-                hlint = "latest";
-                haskell-language-server = "latest";
-                ghcid = "latest";
-                hindent = "latest";
-                steeloverseer = "2.1.0.1";
-              };
-
-            buildInputs =
-              with pkgs;
-              [ entr
-                nodejs
-                spago
-                (ps.command {})
-                ps-tools.for-0_15.purescript-language-server
-                purs-nix.esbuild
-                purs-nix.purescript
-                haskell-language-server-wrapper
-                stylish-haskell
-              ];
-          };
-        });
-
-  # --- Flake Local Nix Configuration ----------------------------
-  nixConfig = {
-    # This sets the flake to use the IOG nix cache.
-    # Nix should ask for permission before using it,
-    # but remove it here if you do not want it to.
-    extra-substituters = ["https://cache.iog.io"];
-    extra-trusted-public-keys = ["hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="];
-    allow-import-from-derivation = "true";
-  };
+          packages.default = self'.packages.halogen-chess;
+        };
+    };
 }
