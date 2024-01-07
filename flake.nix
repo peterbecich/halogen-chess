@@ -209,21 +209,33 @@
             ];
           };
 
-          packages.bar = ps.output {
-          };
+          # single file
+          # packages.foo = ps.bundle {
+          #   # incremental = true;
+          #   esbuild = {
+          #     outfile = "/usr/bin/main.js";
+          #     format = "iife";
+          #   };
+          #   main = true;
+          # };
 
-          packages.foo = ps.bundle {
-            # incremental = true;
+          # https://github.com/purs-nix/purs-nix/blob/master/docs/derivations.md#app
+          packages.foo = ps.app {
+            name = "main.js";
             esbuild = {
-              outfile = "main.js";
               format = "iife";
             };
-            main = true;
           };
-          # packages.purescriptOutput = ps.output {};
-          # packages.purescriptBundle = ps.bundle {
-            # module = "Main";
-          # };
+
+          packages.bar = pkgs.stdenv.mkDerivation rec {
+            name = "javascript bundle";
+            src = self'.packages.foo;
+            dontUnpack = true;
+            installPhase = ''
+              mkdir -p $out/app/static
+              cp $src/bin/main.js  $out/app/static/main.js
+            '';
+          };
 
           packages.dockerImage = pkgs.dockerTools.buildImage {
             name = "peterbecich/halogen-chess";
@@ -231,12 +243,11 @@
             created = "now";
             copyToRoot = pkgs.buildEnv {
               name = "image-root";
+              pathsToLink = [ "/bin" "/app/static" ];
               paths = [
                 self'.packages.halogen-chess
-                # TODO
-                # staticFiles
-                # self'.packages.foo
-                # (ps.bundle {})
+                staticFiles
+                self'.packages.bar
               ];
               # paths
             };
