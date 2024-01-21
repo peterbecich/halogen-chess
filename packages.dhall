@@ -1,6 +1,6 @@
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.15.4-20220901/packages.dhall
-        sha256:f1531b29c21ac437ffe5666c1b6cc76f0a9c29d3c9d107ff047aa2567744994f
+      https://github.com/purescript/package-sets/releases/download/psc-0.15.10-20231023/packages.dhall
+        sha256:b9a482e743055ba8f2d65b08a88cd772b59c6e2084d0e5ad854025fa90417fd4
 
 let additions =
       { argonaut-aeson-generic =
@@ -13,9 +13,8 @@ let additions =
           , "foreign-object"
           , "test-unit"
           ]
-        , repo =
-            "https://github.com/bentongxyz/purescript-argonaut-aeson-generic.git"
-        , version = "dcd925179b37a2ac749b7a1f1ae72bb69746d886"
+        , repo = "https://github.com/coot/purescript-argonaut-aeson-generic.git"
+        , version = "4cee717e3e0003b76e699550f5fc35976901078c"
         }
       , foreign-generic =
         { dependencies =
@@ -30,7 +29,6 @@ let additions =
         , repo = "https://github.com/jsparkes/purescript-foreign-generic.git"
         , version = "844f2ababa2c7a0482bf871e1e6bf970b7e51313"
         }
-
       }
 
 in  upstream // additions
