@@ -166,6 +166,9 @@
           haskellProjects.default = {
             basePackages = pkgs.haskellPackages;
             settings = {
+              cabalFlags.offline = true;
+              extraConfigureFlags.offline = true;
+              extraBuildFlags.offline = true;
               # purescript-bridge.check = false;
               brick.jailbreak = true;
               hls-stan-plugin.check = false;
@@ -174,6 +177,10 @@
               #   { custom = _: super.floskell_0_11_0; };
             };
             packages = {
+              # halogen-chess.source = builtins.path {
+              #   # path = ./.;
+              #   filter = path: _: baseNameOf path != "cabal.project";
+              # };
               chessIO.source = "0.6.1.1";
               # brick.source = "2.3.1";
               brick.source = "0.73";
