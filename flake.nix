@@ -166,6 +166,7 @@
           haskellProjects.default = {
             basePackages = pkgs.haskellPackages;
             settings = {
+              # halogen-chess.cabalFlags.offline = true;
               # purescript-bridge.check = false;
               brick.jailbreak = true;
               hls-stan-plugin.check = false;
