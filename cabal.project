@@ -5,5 +5,4 @@ source-repository-package
   type: git
   -- location: https://github.com/eskimor/purescript-bridge.git
   location: https://github.com/peterbecich/purescript-bridge.git
-  tag: 7d7c1d84854893cb5d1765de9401239ee49ea1d8
-  -- tag: 793cd8206ae777dd8f77245c1c8dbeb597c7828f 
+  tag: 793cd8206ae777dd8f77245c1c8dbeb597c7828f 
