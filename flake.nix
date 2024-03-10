@@ -38,26 +38,17 @@
                    , foreign-generic-repo
                    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = nixpkgs.lib.systems.flakeExposed;
+      systems = [
+        "x86_64-linux"
+        "x86_64-darwin"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
       imports = [
         haskell-flake.flakeModule
         flake-root.flakeModule
         check-flake.flakeModule
       ];
-
-      # ps =
-      #   purs-nix.purs
-      #     { dependencies =
-      #         [ "console"
-      #           "effect"
-      #           "prelude"
-      #         ];
-
-      #       dir = ./.;
-
-      #       # foreign.Main.node_modules =
-      #       #   npmlock2nix.node_modules { src = ./.; } + /node_modules;
-      #     };
 
       perSystem = { self', pkgs, system, config,... }:
         let
@@ -67,8 +58,7 @@
           argonaut-aeson-generic = purs-nix.build {
             name = "argonaut-aeson-generic";
             info =
-              { # version = "1.0.0";
-                dependencies =
+              { dependencies =
                   with purs-nix.ps-pkgs;
                   [ argonaut
                     argonaut-codecs
@@ -89,8 +79,7 @@
           foreign-generic = purs-nix.build {
             name = "foreign-generic";
             info =
-              { # version = "0.15";
-                dependencies =
+              { dependencies =
                   with purs-nix.ps-pkgs;
                   [ effect
                     foreign
@@ -103,7 +92,6 @@
               };
 
             src.git = {
-              # allRefs = true;
               repo = "https://github.com/peterbecich/purescript-foreign-generic.git";
               rev = "844f2ababa2c7a0482bf871e1e6bf970b7e51313";
               sha256 = "1df3n2yq8gmndldl0i1b3xqal50q12za61vgafdd13h1zf9cp3j3";
@@ -153,7 +141,6 @@
             '';
           };
         in {
-
           # https://flake.parts/overlays#consuming-an-overlay
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
@@ -162,23 +149,18 @@
             ];
           };
 
-
           haskellProjects.default = {
             basePackages = pkgs.haskellPackages;
             settings = {
-              # halogen-chess.cabalFlags.offline = true;
-              # purescript-bridge.check = false;
               brick.jailbreak = true;
-              hls-stan-plugin.check = false;
               # https://community.flake.parts/haskell-flake/dependency#nixpkgs
-              # floskell = { super, ... }:
-              #   { custom = _: super.floskell_0_11_0; };
+              # vty = { super, ... }:
+              #   { custom = _: super.vty_5_35_1; };
+
             };
             packages = {
               chessIO.source = "0.6.1.1";
-              # brick.source = "2.3.1";
               brick.source = "0.73";
-              vty-unix.source = "0.2.0.0";
               vty.source = "5.39";
               purescript-bridge.source = inputs.purescript-bridge;
             };
@@ -209,16 +191,6 @@
               (ps.command {})
             ];
           };
-
-          # single file
-          # packages.foo = ps.bundle {
-          #   # incremental = true;
-          #   esbuild = {
-          #     outfile = "/usr/bin/main.js";
-          #     format = "iife";
-          #   };
-          #   main = true;
-          # };
 
           # https://github.com/purs-nix/purs-nix/blob/master/docs/derivations.md#app
           packages.foo = ps.app {
