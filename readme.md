@@ -38,8 +38,9 @@ ghcid --command="cabal repl"
 stylish-haskell --inplace $(find -name '*.hs' -not -path './dist-newstyle/*')
 ```
 
+Feedback loop:
 ```
-sos . -p ".*\.hs" -e ".*\#.*\.hs" -c "echo 'hello'"
+feedback test
 ```
 
 ```

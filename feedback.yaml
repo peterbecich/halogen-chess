@@ -1,0 +1,6 @@
+loops:
+  cabal: cabal build all --enable-tests
+  test: |
+    cabal build all --enable-tests
+    cabal test all
+  check: nix flake check

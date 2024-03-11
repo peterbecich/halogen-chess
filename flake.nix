@@ -22,6 +22,8 @@
 
     foreign-generic-repo.url = "github:peterbecich/purescript-foreign-generic/844f2ababa2c7a0482bf871e1e6bf970b7e51313";
     foreign-generic-repo.flake = false;
+
+    feedback.url = "github:NorfairKing/feedback";
   };
 
   outputs = inputs@{ self
@@ -36,6 +38,7 @@
                    , purescript-bridge
                    , argonaut-aeson-generic-repo
                    , foreign-generic-repo
+                   , feedback
                    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
@@ -181,6 +184,8 @@
               config.haskellProjects.default.outputs.devShell
             ];
             buildInputs = with pkgs; [
+              # haskellPackages.feedback
+              feedback.packages.${system}.default
               purs
               spago
               purs-tidy-bin.purs-tidy-0_10_0
@@ -235,12 +240,10 @@
             };
           };
 
-          # https://www.ertt.ca/nix/shell-scripts/
-          # need to provide `sos` via nixpkgs
-          # localDevelopment =
+          # packages.localDevelopment =
           #   pkgs.writeShellScriptBin "my-script" ''
           #     echo "start server"
-          #     sos . -p ".*\.hs" -e ".*\#.*\.hs" -c "echo 'hello'"
+          #     feedback test
           #   '';
 
           packages.default = self'.packages.halogen-chess;
