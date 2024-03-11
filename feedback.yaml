@@ -1,6 +1,19 @@
 loops:
   cabal: cabal build all --enable-tests
-  test: |
-    cabal build all --enable-tests
-    cabal test all
-  check: nix flake check
+  test:
+    clear: false
+    hooks:
+      before-all:
+        #echo 'kill process at port 8080';
+        # lsof -t -i:8080 -sTCP:LISTEN;
+        # echo -e "$(lsof -t -i:8080 -sTCP:LISTEN)";
+        # kill -9 $(lsof -t -i:8080 -sTCP:LISTEN);
+    run: |
+      cabal build all --enable-tests
+      cabal test all
+      cabal run generate-purescript
+      cabal run halogen-chess
+    filter:
+      git: true
+      find: "-type f -not -name '*.purs'"
+  check: nix flake check -L

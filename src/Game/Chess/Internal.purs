@@ -22,10 +22,8 @@ data Color =
     Black
   | White
 
-instance encodeColor :: Encode Color where
-  encode = genericEncode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
-instance decodeColor :: Decode Color where
-  decode = genericDecode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
+
+
 instance encodeJsonColor :: EncodeJson Color where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 instance decodeJsonColor :: DecodeJson Color where
@@ -54,10 +52,8 @@ data PieceType =
   | Queen
   | King
 
-instance encodePieceType :: Encode PieceType where
-  encode = genericEncode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
-instance decodePieceType :: Decode PieceType where
-  decode = genericDecode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
+
+
 instance encodeJsonPieceType :: EncodeJson PieceType where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 instance decodeJsonPieceType :: DecodeJson PieceType where

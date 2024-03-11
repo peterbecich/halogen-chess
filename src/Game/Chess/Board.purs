@@ -23,10 +23,8 @@ import Prelude
 newtype Board =
     Board (Array Sq)
 
-instance encodeBoard :: Encode Board where
-  encode = genericEncode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
-instance decodeBoard :: Decode Board where
-  decode = genericDecode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
+
+
 instance encodeJsonBoard :: EncodeJson Board where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 instance decodeJsonBoard :: DecodeJson Board where

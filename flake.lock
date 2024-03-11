@@ -546,17 +546,17 @@
     "purescript-bridge": {
       "flake": false,
       "locked": {
-        "lastModified": 1669708689,
-        "narHash": "sha256-urHz3YAxnAbcZ7NuJj803xEicJUv3SOQIapr5Ti0yek=",
+        "lastModified": 1706648825,
+        "narHash": "sha256-SSdR7n5epcSSOdVVM+w+TQQETx3XZoDsBQrxk1rhUd8=",
         "owner": "eskimor",
         "repo": "purescript-bridge",
-        "rev": "793cd8206ae777dd8f77245c1c8dbeb597c7828f",
+        "rev": "d43987ea406dbeb4f4013ecb857686a1b19451f0",
         "type": "github"
       },
       "original": {
         "owner": "eskimor",
         "repo": "purescript-bridge",
-        "rev": "793cd8206ae777dd8f77245c1c8dbeb597c7828f",
+        "rev": "d43987ea406dbeb4f4013ecb857686a1b19451f0",
         "type": "github"
       }
     },

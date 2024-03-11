@@ -13,7 +13,7 @@
     ps-tools.follows = "purs-nix/ps-tools";
 
     purescript-bridge.url =
-      "github:eskimor/purescript-bridge/793cd8206ae777dd8f77245c1c8dbeb597c7828f";
+      "github:eskimor/purescript-bridge/d43987ea406dbeb4f4013ecb857686a1b19451f0";
     purescript-bridge.flake = false;
 
 
@@ -153,6 +153,7 @@
           };
 
           haskellProjects.default = {
+            # basePackages = pkgs.haskell.packages.ghc98;
             basePackages = pkgs.haskellPackages;
             settings = {
               brick.jailbreak = true;

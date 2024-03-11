@@ -21,13 +21,13 @@ import Game.Chess
 import Game.Chess.Move (Move (Move))
 import Game.Chess.Orphans ()
 
+
 newtype Board = Board [Sq]
 
 allPieces :: Board
 allPieces = Board $ enumFrom minBound
 
 deriving instance Generic Board
-
 deriving instance ToJSON Board
 deriving instance FromJSON Board
 

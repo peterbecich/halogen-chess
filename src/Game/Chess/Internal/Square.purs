@@ -84,10 +84,8 @@ data Sq =
   | G8
   | H8
 
-instance encodeSq :: Encode Sq where
-  encode = genericEncode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
-instance decodeSq :: Decode Sq where
-  decode = genericDecode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
+
+
 instance encodeJsonSq :: EncodeJson Sq where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 instance decodeJsonSq :: DecodeJson Sq where

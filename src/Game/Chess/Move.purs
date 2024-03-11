@@ -27,10 +27,8 @@ newtype Move =
     , to :: Sq
     }
 
-instance encodeMove :: Encode Move where
-  encode = genericEncode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
-instance decodeMove :: Decode Move where
-  decode = genericDecode $ defaultOptions { unwrapSingleConstructors = false , unwrapSingleArguments = false }
+
+
 instance encodeJsonMove :: EncodeJson Move where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 instance decodeJsonMove :: DecodeJson Move where
