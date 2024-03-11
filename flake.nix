@@ -225,8 +225,8 @@
               pathsToLink = [ "/bin" "/app/static" ];
               paths = [
                 self'.packages.halogen-chess
-                staticFiles
-                self'.packages.bar
+                # staticFiles
+                # self'.packages.bar
               ];
               # paths
             };
