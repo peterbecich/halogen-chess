@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "argonaut-aeson-generic-repo": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1671848501,
-        "narHash": "sha256-08GoeUfNGzztL85nHVGlVumoDag1bFuc0crFmUuwgBk=",
-        "owner": "coot",
-        "repo": "purescript-argonaut-aeson-generic",
-        "rev": "4cee717e3e0003b76e699550f5fc35976901078c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "coot",
-        "repo": "purescript-argonaut-aeson-generic",
-        "rev": "4cee717e3e0003b76e699550f5fc35976901078c",
-        "type": "github"
-      }
-    },
     "autodocodec": {
       "flake": false,
       "locked": {
@@ -246,23 +229,6 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "foreign-generic-repo": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1654169081,
-        "narHash": "sha256-Q47LkvsBjtCaU28Ho74IGBSqcB8rREAbbbY+hL2ww7U=",
-        "owner": "peterbecich",
-        "repo": "purescript-foreign-generic",
-        "rev": "844f2ababa2c7a0482bf871e1e6bf970b7e51313",
-        "type": "github"
-      },
-      "original": {
-        "owner": "peterbecich",
-        "repo": "purescript-foreign-generic",
-        "rev": "844f2ababa2c7a0482bf871e1e6bf970b7e51313",
         "type": "github"
       }
     },
@@ -609,12 +575,10 @@
     },
     "root": {
       "inputs": {
-        "argonaut-aeson-generic-repo": "argonaut-aeson-generic-repo",
         "check-flake": "check-flake",
         "feedback": "feedback",
         "flake-parts": "flake-parts",
         "flake-root": "flake-root",
-        "foreign-generic-repo": "foreign-generic-repo",
         "haskell-flake": "haskell-flake",
         "nixpkgs": "nixpkgs_3",
         "ps-tools": [
