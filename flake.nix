@@ -16,14 +16,10 @@
       "github:eskimor/purescript-bridge/d43987ea406dbeb4f4013ecb857686a1b19451f0";
     purescript-bridge.flake = false;
 
-
-    argonaut-aeson-generic-repo.url = "github:coot/purescript-argonaut-aeson-generic/4cee717e3e0003b76e699550f5fc35976901078c";
-    argonaut-aeson-generic-repo.flake = false;
-
-    foreign-generic-repo.url = "github:peterbecich/purescript-foreign-generic/844f2ababa2c7a0482bf871e1e6bf970b7e51313";
-    foreign-generic-repo.flake = false;
-
     feedback.url = "github:NorfairKing/feedback";
+
+    # /4cee717e3e0003b76e699550f5fc35976901078c
+    # argonaut-aeson-generic-in.src.flake.url = "github:coot/purescript-argonaut-aeson-generic";
   };
 
   outputs = inputs@{ self
@@ -36,8 +32,6 @@
                    , purs-nix
                    , ps-tools
                    , purescript-bridge
-                   , argonaut-aeson-generic-repo
-                   , foreign-generic-repo
                    , feedback
                    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -73,6 +67,7 @@
                   ];
               };
 
+            # src.flake.url = "github:coot/purescript-argonaut-aeson-generic/4cee717e3e0003b76e699550f5fc35976901078c";
             src.git = {
               repo = "https://github.com/coot/purescript-argonaut-aeson-generic.git";
               rev = "4cee717e3e0003b76e699550f5fc35976901078c";
